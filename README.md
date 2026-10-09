@@ -6,6 +6,8 @@
 
 实现范围与实际验证进度见 [功能进度](docs/PROGRESS.md)，协作和编写规范见 [AGENTS.md](AGENTS.md)。功能按独立 Git 提交推进，便于中断后继续。
 
+重开对话时，使用固定的 [接手入口与提示词](docs/HANDOFF.md) 继续任务。
+
 ## 运行
 
 使用 DevEco Studio 打开本项目，等待依赖同步，选择已启动的 HarmonyOS 模拟器并运行 `entry`。签名、本机 SDK 配置和私有凭据不入库。

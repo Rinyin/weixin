@@ -1,90 +1,76 @@
-import { Chatter } from "./Chatter"
+import { AppStore } from '../services/AppStore';
+import { Contact, ChatMessage } from '../model/Models';
+import { avatarResource, BACKGROUND, TEXT_SECONDARY, timeLabel } from '../common/Theme';
+import { PageHeader } from './PageHeader';
+
+interface Conversation {
+  contact: Contact;
+  lastMessage: ChatMessage;
+}
 
 @Component
+export struct WeixinContainer {
+  @StorageLink('revision') @Watch('refresh') revision: number = 0;
+  @StorageLink('fontScale') fontScale: number = 1;
+  @State query: string = '';
+  @State conversations: Conversation[] = [];
 
-export struct  WeixinContainer{
-  @State chatters : Chatter[]= [
-    new Chatter($r('app.media.avatar1'), '虎子', '一起找老大踢毽子', '上午 12：05'),
-    new Chatter($r('app.media.avatar2'), '敖炳', '我要去练武了，勿扰', '00：00'),
-  new Chatter($r('app.media.avatar3'), '哪吒', '一起踢毽子', '上午 10：00'),
-  new Chatter($r('app.media.avatar4'), '太乙真人', '中午有啥好吃的？', '上午 9：05'),
-  new Chatter($r('app.media.avatar5'), '结界兽甲', '你知道结界兽乙去哪里偷懒了吗？', '23：40'),
-    new Chatter($r('app.media.avatar6'), '李靖', '下午你值守城门你', '8：00'),
-    new Chatter($r('app.media.avatar5'), '结界兽乙', '结界兽甲找你打听我了吗？', '23：50'),
-    new Chatter($r('app.media.avatar6'), '兵甲', '看我的新头像，帅不帅？', '23：50'),
-  ]
-  @Builder
-  createListItem(item: Chatter){
-    Row() {
-      Column() {
-        Image(item.getAvatar())
-          .width(50)
-          .height(50)
-          .margin({ left: 10, right: 10 })
+  aboutToAppear(): void { this.refresh(); }
+
+  refresh(): void {
+    const items: Conversation[] = [];
+    AppStore.data.contacts.forEach((contact: Contact) => {
+      const messages = AppStore.data.messages.filter((message: ChatMessage) => message.contactId === contact.id);
+      if (messages.length > 0) {
+        items.push({ contact: contact, lastMessage: messages[messages.length - 1] });
       }
+    });
+    this.conversations = items.sort((a: Conversation, b: Conversation) => b.lastMessage.createdAt - a.lastMessage.createdAt);
+  }
 
-      Column() {
-        Row() {
-          Text(item.getNickName()).fontSize(18);
-          Blank()
-          Text(item.getLastTime()).fontSize(12).fontColor(Color.Gray);
-        }.width('100%')
-        .margin({ top: 16 }) //昵称和最后聊天时间
-        Row() {
-          Text(item.getLastWords()).fontSize(16).fontColor(Color.Gray);
-        }.justifyContent(FlexAlign.Start)
-        .margin({ top: 5 })
-        .width('100%')
-        Blank()
-        Divider()
-        //最后的聊天内容
-      }.width(260)
-      .height(80)
-    }
-    .backgroundColor(Color.White)
-    .width('100%')
-    .height(80)
+  filtered(): Conversation[] {
+    const text = this.query.trim().toLowerCase();
+    return this.conversations.filter((item: Conversation) =>
+      item.contact.name.toLowerCase().includes(text) || AppStore.data.messages.some((message: ChatMessage) =>
+        message.contactId === item.contact.id && message.text.toLowerCase().includes(text)));
   }
 
   build() {
-    //Text('今晚老地方见')
     Column() {
-      //微信头
-      //文字和按钮是叠放的
-      Stack() {
-        Row() {
-          Text(`微信(520)`).fontSize(20)
-        }.width('85%')
-        .height(50)
-        .justifyContent(FlexAlign.Center)
-
-        Row() {
-          Button() {
-            Image($r('app.media.plus')).width(26)
-          }.margin({ right: 15 })
-          .backgroundColor('#ededed')
-        }.width('100%')
-        .justifyContent(FlexAlign.End)
-      }.height(50)
-
-      //搜索框
-      Search({ placeholder: '搜索' }).width('90%')
-        .margin({
-          bottom: 15
-        })
-        .height(40)
-      //消息提示
-      //聊天列表
+      PageHeader({ title: '微信', back: false, action: '＋', onAction: () => {
+        this.getUIContext().getRouter().pushUrl({ url: 'pages/StartChat' });
+      } })
+      Search({ value: this.query, placeholder: '搜索联系人或聊天内容' })
+        .textFont({ size: 15 * this.fontScale }).placeholderFont({ size: 15 * this.fontScale })
+        .height(40 * this.fontScale).margin({ left: 14, right: 14, bottom: 12 })
+        .onChange((value: string) => { this.query = value; })
       List() {
-        ForEach(this.chatters, (item: Chatter)=>{
+        ForEach(this.filtered(), (item: Conversation) => {
           ListItem() {
-            this.createListItem(item)
+            Row({ space: 12 }) {
+              Image(avatarResource(item.contact.avatar)).width(52).height(52).borderRadius(8).objectFit(ImageFit.Cover)
+              Column({ space: 7 }) {
+                Row() {
+                  Text(item.contact.name).fontSize(17 * this.fontScale).fontWeight(FontWeight.Medium)
+                    .layoutWeight(1).maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis })
+                  Text(timeLabel(item.lastMessage.createdAt)).fontSize(11 * this.fontScale).fontColor('#999999')
+                }.width('100%')
+                Text(item.lastMessage.text).fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY)
+                  .width('100%').maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis })
+              }.layoutWeight(1).alignItems(HorizontalAlign.Start)
+            }.width('100%').padding({ left: 16, right: 16, top: 15, bottom: 15 })
+            .backgroundColor(Color.White)
+          }.onClick(() => {
+            this.getUIContext().getRouter().pushUrl({ url: 'pages/Chat', params: { contactId: item.contact.id } });
+          })
+        }, (item: Conversation) => item.contact.id + item.lastMessage.id)
+        if (this.filtered().length === 0) {
+          ListItem() {
+            Text(this.query ? '没有找到相关聊天' : '点击右上角 ＋，开始一段聊天')
+              .fontSize(15 * this.fontScale).fontColor(TEXT_SECONDARY).padding(32).width('100%').textAlign(TextAlign.Center)
           }
-        })
-      }.width('100%')
-      .layoutWeight(1)
-    }.width('100%')
-    .height('100%')
-    .backgroundColor('#ededed')
+        }
+      }.divider({ strokeWidth: 0.5, color: '#EEEEEE', startMargin: 80 }).layoutWeight(1).width('100%')
+    }.width('100%').height('100%').backgroundColor(BACKGROUND)
   }
 }

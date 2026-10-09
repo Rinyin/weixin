@@ -10,6 +10,7 @@ export class AppStore {
   static settings: preferences.Preferences;
   private static dataPath: string = '';
   private static writeQueue: Promise<void> = Promise.resolve();
+  private static writable: boolean = false;
 
   static async initialize(context: common.UIAbilityContext): Promise<void> {
     AppStorage.setOrCreate('revision', 0);
@@ -27,10 +28,13 @@ export class AppStore {
           throw new Error('数据格式不兼容');
         }
         AppStore.data = saved;
+        AppStore.writable = true;
       } else {
+        AppStore.writable = true;
         await AppStore.save();
       }
     } catch {
+      AppStore.writable = false;
       AppStorage.setOrCreate('storeError', '本地数据读取失败，请检查设备存储后重启应用。');
     }
   }
@@ -44,6 +48,9 @@ export class AppStore {
   }
 
   static async save(): Promise<void> {
+    if (!AppStore.writable) {
+      throw new Error('本地数据未成功加载，已阻止覆盖原文件');
+    }
     const content = JSON.stringify(AppStore.data);
     // 捕获调用时快照，写入串行化；失败保留原文件并将错误传给操作界面。
     const current = AppStore.writeQueue.then(() => {
