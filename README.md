@@ -10,6 +10,8 @@
 
 使用 DevEco Studio 打开本项目，等待依赖同步，选择已启动的 HarmonyOS 模拟器并运行 `entry`。签名、本机 SDK 配置和私有凭据不入库。
 
+也可在 Git Bash 中运行 `bash tools/build.sh`，使用 DevEco 配套的 Hvigor 构建（非默认安装位置请设置 `DEVECO_HOME`）。`python tools/device.py` 为 HDC 手动验收辅助工具，支持启动、点击、输入、返回和保存真实设备截图。
+
 验证码登录服务依据课程报告中的 `word-api`；聊天和社交数据属于本地教学演示，联机配置与验收结果将随对应功能补充。
 
 ## 许可证与素材

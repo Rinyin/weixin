@@ -17,7 +17,7 @@
         "name": "EntryAbility", // UIAbility组件的名称
         "srcEntry": "./ets/entryability/EntryAbility.ets",// UIAbility组件的代码路径
         "description": "$string:EntryAbility_desc",// UIAbility组件的描述信息
-        "icon": "$media:app_icon",// UIAbility组件的图标
+        "icon": "$media:layered_image",// UIAbility组件的图标
         "label": "$string:EntryAbility_label",// UIAbility组件的标签
         "startWindowIcon": "$media:icon_startwindow",// UIAbility组件启动页面图标资源文件的索引
         "startWindowBackground": "$color:start_window_background",// UIAbility组件启动页面背景颜色资源文件的索引
@@ -34,55 +34,8 @@
         ]
       }
     ],
-    "extensionAbilities": [
-      {
-        "name": "EntryBackupAbility",
-        "srcEntry": "./ets/entrybackupability/EntryBackupAbility.ets",
-        "type": "backup",
-        "exported": false,
-        "metadata": [
-          {
-            "name": "ohos.extension.backup",
-            "resource": "$profile:backup_config"
-          }
-        ],
-      }
-    ],
     //申请权限
     "requestPermissions": [
-      //相机
-      {
-        "name": "ohos.permission.CAMERA",
-        "reason": "$string:reason",
-        "usedScene": {
-          "abilities": [
-            "Index"
-          ],
-          "when": "inuse"
-        }
-      },
-      //麦克风
-      {
-        "name": "ohos.permission.MICROPHONE",
-        "reason": "$string:reason",
-        "usedScene": {
-          "abilities": [
-            "Index"
-          ],
-          "when": "inuse"
-        }
-      },
-      //位置信息
-      {
-        "name": "ohos.permission.MEDIA_LOCATION",
-        "reason": "$string:reason",
-        "usedScene": {
-          "abilities": [
-            "Index"
-          ],
-          "when": "inuse"
-        }
-      },
       //网络
       {
         "name": "ohos.permission.INTERNET",

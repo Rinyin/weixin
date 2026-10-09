@@ -1,26 +1,29 @@
 import { CompassList } from '../components/CompassList';
 import { ContackList } from '../components/ContackList';
 import { Profile } from '../components/Profile';
-import {WeixinContainer} from '../components/WeixinContainer';
+import { WeixinContainer } from '../components/WeixinContainer';
+import { BACKGROUND, GREEN } from '../common/Theme';
 
 @Entry
 @Component
 struct Index {
-  @State currentIndex: number = 2
+  @State currentIndex: number = 0;
+  @StorageLink('fontScale') fontScale: number = 1;
+  @StorageLink('storeError') storeError: string = '';
   @Builder
   createTabBar(ImgR: Resource, title: string, index: number) {
-    Column() {
-      Row() {
-        Image(ImgR).height(24)
-          .fillColor(this.currentIndex == index ? Color.Green : Color.Gray)
-      }
-      Row() {
-        Text(title).fontSize(12).fontColor(this.currentIndex == index ? Color.Green : Color.Gray)
-      }.margin({ top: 5 })
-    }
+    Column({ space: 3 }) {
+      Image(ImgR).width(25).height(25).fillColor(this.currentIndex === index ? GREEN : '#555555')
+      Text(title).fontSize(11 * this.fontScale).fontColor(this.currentIndex === index ? GREEN : '#555555')
+    }.width('100%').height('100%').justifyContent(FlexAlign.Center)
   }
   build() {
-    Tabs({ barPosition: BarPosition.End , index: 2}) {
+    Column() {
+      if (this.storeError) {
+        Text(this.storeError).fontSize(13 * this.fontScale).fontColor('#B64236')
+          .padding(10).width('100%').backgroundColor('#FFF0E9')
+      }
+    Tabs({ barPosition: BarPosition.End , index: this.currentIndex}) {
       TabContent() {
         WeixinContainer()
       }.tabBar(this.createTabBar($r('app.media.weixin'), '微信', 0))
@@ -37,8 +40,9 @@ struct Index {
         Profile()
       }.tabBar(this.createTabBar($r('app.media.me'), '我', 3))
     }.onChange((index: number) => {this.currentIndex = index})
-    .backgroundColor('#ededed')
-    .barWidth('100%')  // 确保宽度设置正确
-    .barHeight(50)     // 设置合适的高度
+    .backgroundColor(BACKGROUND)
+    .barWidth('100%').barHeight(58 * this.fontScale)
+    .divider({ strokeWidth: 0.5, color: '#D8D8D8' }).scrollable(false).layoutWeight(1)
+    }.width('100%').height('100%').backgroundColor(BACKGROUND)
   }
 }
