@@ -1,216 +1,96 @@
-import { it } from "@ohos/hypium"
-import { Contacts } from "./Contacts"
-//索引
-const  alphabets = ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
-  'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+import { PageHeader } from './PageHeader';
+import { AppStore } from '../services/AppStore';
+import { Contact } from '../model/Models';
+import { avatarResource, BACKGROUND, GREEN, TEXT_SECONDARY } from '../common/Theme';
+
+interface ContactGroup {
+  initial: string;
+  contacts: Contact[];
+}
+
 @Component
-export struct  ContackList {
+export struct ContackList {
+  @StorageLink('fontScale') fontScale: number = 1;
+  @StorageLink('revision') @Watch('refresh') revision: number = 0;
+  @State query: string = '';
+  @State groups: ContactGroup[] = [];
+  @State initials: string[] = [];
   @State selectedIndex: number = 0;
-  private listScroller: Scroller = new Scroller();
+  private scroller: Scroller = new Scroller();
 
-  @State contacts: Contacts[] = [
-    new Contacts($r('app.media.newFriends'), '新的朋友', '#fa9c3e'),
-    new Contacts($r('app.media.xinxihuihuaxiaox11i'), '仅聊天的朋友', '#fa9c3e'),
-    new Contacts($r('app.media.qunliao'), '群聊', '#08c05e'),
-    new Contacts($r('app.media.label'), '标签', '#fa9c3e'),
-    new Contacts($r('app.media.gongzhonghao'), '公众号', '#1584ef'),
-    new Contacts($r('app.media.servicelist'), '服务号', '#1584ef'),
-    new Contacts($r('app.media.qiyeweixin'), '企业微信联系人','#2781d7'),
-  ]
+  aboutToAppear(): void { this.refresh(); }
 
-  @State qiyeContacts: Contacts[] =[
-    new Contacts($r('app.media.qiyeweixin'), '企业微信联系人','#2781d7')
-  ]
-  @State Acontacts : Contacts[]= [
-    new Contacts($r('app.media.avatar2'), '敖炳')
-  ]
-  @State Bcontacts : Contacts[]= [
-    new Contacts($r('app.media.avatar6'), '兵甲'),
-    new Contacts($r('app.media.avatar6'), '兵乙')
-  ]
-  @State Hcontacts : Contacts[]= [
-    new Contacts($r('app.media.avatar1'), '虎子')
-  ]
-  @State Tcontacts : Contacts[]= [
-    new Contacts($r('app.media.avatar4'), '太乙真人')
-  ]
-  @State Ncontacts : Contacts[]= [
-    new Contacts($r('app.media.avatar3'), '哪吒')
-  ]
-  @State Jcontacts : Contacts[]= [
-    new Contacts($r('app.media.avatar5'), '结界兽甲'),
-    new Contacts($r('app.media.avatar5'), '结界兽乙')
-  ]
-  @State Lcontacts : Contacts[]= [
-    new Contacts($r('app.media.avatar6'), '李靖')
-  ]
-  @Builder
-  createListItem(item: Contacts, setBgColor: boolean = false, bgColor?: string){
-    Row() {
-      Column() {
-        if(!setBgColor){
-          Image(item.getAvatar())
-            .width(50)
-            .height(50)
-            .margin({ left: 10, right: 10 })
-        } else {
-          Row(){
-            Image(item.getAvatar()).fillColor(Color.White)
-              .width(36)
-          }.width(50)
-          .height(50)
-          .justifyContent(FlexAlign.Center)
-          .backgroundColor(item.getBgColor())
-          .borderRadius(8)
-        }
-      }.margin({left: 20})
-
-      Column() {
-        Row() {
-          Text(item.getNickName()).fontSize(18);
-        }.width('100%')
-        .height('100%')
-        .alignItems(VerticalAlign.Center)
-      }.width(260)
-      .height(78)
-      .margin({left: 10})
-      Divider()
-    }
-    .backgroundColor(Color.White)
-    .width('100%')
-    .height(80)
+  refresh(): void {
+    const query = this.query.trim().toLowerCase();
+    const contacts = AppStore.data.contacts.filter((item: Contact) =>
+      item.name.toLowerCase().includes(query) || item.account.toLowerCase().includes(query));
+    const groups: ContactGroup[] = [];
+    contacts.sort((a: Contact, b: Contact) => a.initial.localeCompare(b.initial) || a.name.localeCompare(b.name))
+      .forEach((contact: Contact) => {
+        let group = groups.find((item: ContactGroup) => item.initial === contact.initial);
+        if (!group) { group = { initial: contact.initial, contacts: [] }; groups.push(group); }
+        group.contacts.push(contact);
+      });
+    this.groups = groups;
+    this.initials = groups.map((group: ContactGroup) => group.initial);
+    this.selectedIndex = 0;
   }
 
-  @Builder itemHead(text: string) {
-    // 列表分组的头部组件，对应联系人分组A、B等位置的组件
-    Row(){
-      Text(text)
-        .fontSize(20)
-        .width('100%')
-        .padding(5)
-        .margin({left: 20, top: 30})
-    }.width('100%')
-
+  @Builder
+  groupHeader(initial: string) {
+    Text(initial).fontSize(13 * this.fontScale).fontColor(TEXT_SECONDARY)
+      .padding({ left: 18, top: 7, bottom: 7 }).width('100%').backgroundColor(BACKGROUND)
   }
 
   build() {
-    //Text('今晚老地方见')
     Column() {
-      //微信头
-      //文字和按钮是叠放的
-      Stack() {
-        Row() {
-          Text(`通讯录`).fontSize(20)
-        }.width('85%')
-        .height(50)
-        .justifyContent(FlexAlign.Center)
-
-        Row() {
-          Button() {
-            Image($r('app.media.addFriends')).width(26)
-          }.margin({ right: 15 })
-          .backgroundColor('#ededed')
-        }.width('100%')
-        .justifyContent(FlexAlign.End)
-      }
-
-      //搜索框
-      Search({ placeholder: '搜索' }).width('90%')
-        .margin({
-          bottom: 15
-        })
-      //消息提示
-      //聊天列表
+      PageHeader({ title: '通讯录', back: false, action: '＋', onAction: () => {
+        this.getUIContext().getRouter().pushUrl({ url: 'pages/AddFriend' });
+      } })
+      Search({ value: this.query, placeholder: '搜索姓名或微信号' })
+        .textFont({ size: 15 * this.fontScale }).placeholderFont({ size: 15 * this.fontScale })
+        .height(40 * this.fontScale).margin({ left: 14, right: 14, bottom: 12 })
+        .onChange((value: string) => { this.query = value; this.refresh(); })
       Stack({ alignContent: Alignment.End }) {
-        List() {
-          ForEach(this.contacts, (item: Contacts) => {
-            ListItem() {
-              this.createListItem(item, true, '#fa9c3e')
-            }
-          })
-          ListItemGroup({ header: this.itemHead('我的企业') }) {
-            ForEach(this.qiyeContacts, (item: Contacts) => {
-              ListItem() {
-                this.createListItem(item, true, '#fa9c3e')
-              }
+        List({ scroller: this.scroller }) {
+          ListItem() {
+            Row({ space: 14 }) {
+              Image($r('app.media.newFriends')).width(42).height(42).padding(7)
+                .fillColor(Color.White).backgroundColor('#FA9D3B').borderRadius(7)
+              Text('新的朋友').fontSize(17 * this.fontScale).layoutWeight(1)
+              Text('添加 ›').fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY)
+            }.padding(16).width('100%').backgroundColor(Color.White)
+          }.onClick(() => this.getUIContext().getRouter().pushUrl({ url: 'pages/AddFriend' }))
+          ForEach(this.groups, (group: ContactGroup) => {
+            ListItemGroup({ header: this.groupHeader(group.initial) }) {
+              ForEach(group.contacts, (contact: Contact) => {
+                ListItem() {
+                  Row({ space: 14 }) {
+                    Image(avatarResource(contact.avatar)).width(44).height(44).borderRadius(7)
+                    Text(contact.name).fontSize(17 * this.fontScale).layoutWeight(1)
+                      .maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis })
+                  }.padding({ left: 16, top: 12, bottom: 12, right: 35 }).width('100%').backgroundColor(Color.White)
+                }.onClick(() => this.getUIContext().getRouter().pushUrl({
+                  url: 'pages/ContactDetail', params: { contactId: contact.id }
+                }))
+              }, (contact: Contact) => contact.id)
+            }.divider({ strokeWidth: 0.5, color: '#EEEEEE', startMargin: 74 })
+          }, (group: ContactGroup) => group.initial + group.contacts.map((contact: Contact) => contact.id).join('|'))
+          ListItem() {
+            Text(this.groups.length === 0 ? '没有找到联系人' : AppStore.data.contacts.length.toString() + ' 位朋友')
+              .fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY).textAlign(TextAlign.Center).padding(24).width('100%')
+          }
+        }.width('100%').height('100%').scrollBar(BarState.Off)
+          .onScrollIndex((first: number) => { this.selectedIndex = Math.max(0, Math.min(this.initials.length - 1, first - 1)); })
+        if (this.initials.length > 1) {
+          AlphabetIndexer({ arrayValue: this.initials, selected: this.selectedIndex })
+            .selectedColor(Color.White).selectedBackgroundColor(GREEN).color(TEXT_SECONDARY)
+            .itemSize(23).margin({ right: 3 }).onSelect((index: number) => {
+              this.selectedIndex = index;
+              this.scroller.scrollToIndex(index + 1, true, ScrollAlign.START);
             })
-          }
-
-          ListItemGroup({ header: this.itemHead('A') }) {
-            ForEach(this.Acontacts, (item: Contacts) => {
-              ListItem() {
-                this.createListItem(item, false)
-              }
-            })
-          }
-
-          ListItemGroup({ header: this.itemHead('B') }) {
-            ForEach(this.Bcontacts, (item: Contacts) => {
-              ListItem() {
-                this.createListItem(item)
-              }
-            })
-          }
-
-          ListItemGroup({ header: this.itemHead('H') }) {
-            ForEach(this.Hcontacts, (item: Contacts) => {
-              ListItem() {
-                this.createListItem(item)
-              }
-            })
-          }
-
-          ListItemGroup({ header: this.itemHead('L') }) {
-            ForEach(this.Lcontacts, (item: Contacts) => {
-              ListItem() {
-                this.createListItem(item)
-              }
-            })
-          }
-
-          ListItemGroup({ header: this.itemHead('N') }) {
-            ForEach(this.Ncontacts, (item: Contacts) => {
-              ListItem() {
-                this.createListItem(item)
-              }
-            })
-          }
-
-          ListItemGroup({ header: this.itemHead('T') }) {
-            ForEach(this.Tcontacts, (item: Contacts) => {
-              ListItem() {
-                this.createListItem(item)
-              }
-            })
-          }
-
-        }.width('100%')
-        .onScrollIndex((firstIndex: number) => {
-          // 根据列表滚动到的索引值，重新计算对应联系人索引栏的位置this.selectedIndex
-          if(firstIndex <= 3) {
-            this.selectedIndex = 1
-          } else if(firstIndex <= 4) {
-            this.selectedIndex = 2
-          } else if(firstIndex <= 5) {
-            this.selectedIndex = 8
-          } else if(firstIndex <= 6) {
-            this.selectedIndex = 12
-          } else if(firstIndex <= 7) {
-            this.selectedIndex = 14
-          } else if(firstIndex <= 9) {
-            this.selectedIndex = 20
-          }
-        }).margin({
-          bottom: 100
-        })
-        // 字母表索引组件
-        AlphabetIndexer({ arrayValue: alphabets, selected: 0 })
-          .selected(this.selectedIndex)
-          .margin({right: 5})
-      }.width('100%')
-      .height('auto')
-      .backgroundColor('#ededed')
-
-    }
+        }
+      }.layoutWeight(1).width('100%')
+    }.width('100%').height('100%').backgroundColor(BACKGROUND)
   }
 }

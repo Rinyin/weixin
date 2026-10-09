@@ -2,6 +2,8 @@
   "src": [
     "pages/Index",
     "pages/Chat",
-    "pages/StartChat"
+    "pages/StartChat",
+    "pages/AddFriend",
+    "pages/ContactDetail"
 	]
 }
