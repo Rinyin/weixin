@@ -29,6 +29,11 @@ export struct Profile {
           this.getUIContext().getRouter().pushUrl({ url: 'pages/Moments', params: { mineOnly: true } });
         } })
       }
+      ListItem() {
+        MenuRow({ title: '视频号', rowId: 'profile-video', icon: $r('app.media.shipinhao'), color: '#F4A13C', onOpen: () => {
+          this.getUIContext().getRouter().pushUrl({ url: 'pages/VideoChannel' });
+        } })
+      }
     }.height('100%').width('100%').backgroundColor(BACKGROUND)
   }
 }

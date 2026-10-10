@@ -6,6 +6,7 @@
     "pages/AddFriend",
     "pages/ContactDetail",
     "pages/Moments",
-    "pages/PublishMoment"
+    "pages/PublishMoment",
+    "pages/VideoChannel"
 	]
 }

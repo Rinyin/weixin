@@ -10,6 +10,8 @@
 | F2 重复添加提示 | 2026-10-10，在现有模拟器 `127.0.0.1:5557` 再次填写“小陈 / course_friend_01”，收起键盘后点击添加 | 通过；明确提示“该微信号已在通讯录中，请勿重复添加”，停留当前页 | [重复提示](screenshots/f2-duplicate-contact.png) |
 | F3 朋友圈 | 2026-10-10 构建安装 → 发现/朋友圈浏览两条种子动态 → 点赞敖丙动态并评论“今天也要开心” → 发表文字及猫咪配图 → 我/我的朋友圈 | 通过；旧联系人和消息仍在；点赞评论即时更新；发表返回列表首项；我的朋友圈仅展示自己的动态；空发表和空评论发送按钮禁用 | [浏览](screenshots/f3-moments-feed.png)、[互动](screenshots/f3-interaction.png)、[发表](screenshots/f3-publish.png)、[我的朋友圈](screenshots/f3-my-moments.png) |
 | F3 重启保留 | 强制停止并重新启动应用 → 发现/朋友圈 → 下滑查看原动态 | 通过；新发表的图文、敖丙动态的点赞和评论均保留 | [发表保留](screenshots/f3-restart-published.png)、[互动保留](screenshots/f3-restart-interaction.png) |
+| F4 播放与切换 | 2026-10-10 构建安装 → 发现/视频号 → 播放首段 → 暂停 → 下一条并播放 → 再切第三条 | 通过；真实画面变化、进度从 00:01 增至 00:47；暂停后两次读取均为 00:49；三个源均能播放 | [播放](screenshots/f4-video-playing.png)、[暂停](screenshots/f4-video-paused.png)、[第二段](screenshots/f4-video-second.png)、[第三段](screenshots/f4-video-third.png) |
+| F4 生命周期与入口 | 播放时回到桌面 → 重新进入 → 返回发现 → 我/视频号；退出前后读取系统播放器服务 | 通过；后台恢复为已暂停；返回正常；“我”入口从 00:00 就绪；退出前 PlayerServer 有 1 个实例，退出后为 0 个 | [后台暂停](screenshots/f4-background-paused.png)、[返回](screenshots/f4-return-discover.png)、[我的入口](screenshots/f4-profile-entry.png)；系统取证留本机 `.local/`，未开展压力或内存泄漏测试 |
 
 构建详细输出保存在本机忽略目录 `.local/`。每项仅进行必要构建和相关功能操作；未运行与改动无关的压力测试或测试模板。
 

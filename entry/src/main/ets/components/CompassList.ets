@@ -16,6 +16,11 @@ export struct CompassList {
           } })
         }
         ListItem() {
+          MenuRow({ title: '视频号', rowId: 'discover-video', icon: $r('app.media.shipinhao'), color: '#F4A13C', onOpen: () => {
+            this.getUIContext().getRouter().pushUrl({ url: 'pages/VideoChannel' });
+          } })
+        }
+        ListItem() {
           Text('本地课程数据 · 分享生活中的小美好').fontSize(13 * this.fontScale)
             .fontColor(TEXT_SECONDARY).padding(20).width('100%').textAlign(TextAlign.Center)
         }
