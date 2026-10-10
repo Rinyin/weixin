@@ -14,7 +14,7 @@
 
 ## 下载与运行
 
-[下载 v1.0.0 HAP](https://github.com/Rinyin/weixin/releases/download/v1.0.0/weixin-1.0.0-emulator-unsigned.hap)；[Release](https://github.com/Rinyin/weixin/releases/tag/v1.0.0) 同时提供源码、校验文件与许可证，完整信息见 [交付说明](docs/DELIVERY.md)。安装包为 `weixin-1.0.0-emulator-unsigned.hap`，已在本项目当前模拟器安装运行；它是未签名调试包，不代表真机免签可装。真机安装需在 DevEco 配置自己的签名。
+[下载 v1.0.1 HAP](https://github.com/Rinyin/weixin/releases/download/v1.0.1/weixin-1.0.1-emulator-unsigned.hap)；[Release](https://github.com/Rinyin/weixin/releases/tag/v1.0.1) 同时提供源码、校验文件与许可证，完整信息见 [交付说明](docs/DELIVERY.md)。安装包为 `weixin-1.0.1-emulator-unsigned.hap`，已在本项目当前模拟器安装运行；它是未签名调试包，不代表真机免签可装。真机安装需在 DevEco 配置自己的签名。
 
 使用 DevEco Studio 打开本项目，等待依赖同步，选择已启动的 HarmonyOS 模拟器并运行 `entry`。签名、本机 SDK 配置和私有凭据不入库。也可在 Windows Git Bash 中使用 IDE 自带的 Node、OHPM、Hvigor：
 

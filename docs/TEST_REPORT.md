@@ -21,6 +21,7 @@
 | F6 新页面字号与冷启动 | 对新登录/设置内容应用 140%；滚动登录页并完成取码、填入和真实登录；联机状态强制停止、重新打开；进入本地体验后恢复 100% | 通过；新内容换行正常，输入框和按钮可滚动到达，登录成功；冷启动清空登录表单，未恢复联机会话；本地联系人、消息与“小林同学”资料仍在。验后恢复标准字号 | [设置大字号](screenshots/f6-settings-font.png)、[登录页顶部](screenshots/f6-login-font-top.png)、[登录操作区](screenshots/f6-login-font-bottom.png)、[大字号登录成功](screenshots/f6-online-font.png)、[冷启动](screenshots/f6-cold-start.png) |
 | F7 产物交付 | 复用 F6 同一 HAP；检查 ZIP、版本、权限和许可，生成交付副本及校验文件；发布 v1.0.0；比对全部远端附件与源码标签 | 通过；65 个 ZIP 条目 CRC 全过，无重复/越界路径；HAP 为 49,993,097 字节，仅 INTERNET；6 个公开附件的 GitHub SHA-256 摘要和大小均与本地一致，源码标签为 `515be15`。未为仅改文档重跑无关测试 | [交付说明](DELIVERY.md)、[Release](https://github.com/Rinyin/weixin/releases/tag/v1.0.0)；本机 `.local/release-verification.json` |
 | F8 图标、名称及启动页 | 2026-10-10，1.0.1 必要构建 → HDC 覆盖安装 → 现有模拟器中文桌面检查 → 强制停止后抓取系统启动窗口 → 进入登录页 | 通过；桌面图标和启动画面均为用户提供的微信图标，桌面名称为“微信”，启动后正常显示登录页；默认/zh_CN/en_US 名称资源经静态核对一致。HAP 内图标与两份源 PNG 字节一致；66 个 ZIP 条目 CRC 全过，版本 1.0.1/1000001 | [桌面图标与名称（实际截图裁剪）](screenshots/f8-launcher-icon-name.png)、[系统启动画面](screenshots/f8-start-window.jpeg)、[启动后登录页](screenshots/f8-launch-login.png)；本机 `.local/build-F8.log`、`.local/install-F8.log` |
+| F8 更新交付 | 将同一已安装验证的 1.0.1 HAP 上传新 Release，比对 6 个附件与源码标签 | 通过；HAP 为 50,029,903 字节；全部 GitHub SHA-256 摘要及大小与本地一致，源码标签为 `7ec73b6`；v1.0.0 原发布保持独立 | [v1.0.1 Release](https://github.com/Rinyin/weixin/releases/tag/v1.0.1)、[交付说明](DELIVERY.md)；本机 `.local/release-verification-v1.0.1.json` |
 
 构建详细输出保存在本机忽略目录 `.local/`。每项仅进行必要构建和相关功能操作；未运行与改动无关的压力测试或测试模板。
 

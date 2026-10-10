@@ -19,7 +19,7 @@
 
 ## 接续点（2026-10-10）
 
-本轮已从 F5 检查点继续，**F0–F7 全部完成**：F6 `515be15`，F7 交付文档 `4f92c60`，v1.0.0 已发布。用户随后补充 F8：应用图标和启动页使用提供的 PNG，应用名称为“微信”。**F8 已实现并通过 1.0.1 构建、覆盖安装、实际桌面及冷启动画面验证**，下一步交付同一新包。不要重复已通过的无关测试。
+本轮已从 F5 检查点继续，**F0–F8 全部完成**。F6 `515be15`，F7 交付文档 `4f92c60`；用户补充的 F8 图标、名称和系统启动页修改已在 `7ec73b6` 实现、构建并实际验证，**最新 v1.0.1 已公开交付并完成远端核对**。当前没有未完成功能或外部阻塞，不要重复已通过的无关测试。
 
 F0–F2 已验证。F2 本轮补验：再次添加“小陈 / course_friend_01”，页面显示“该微信号已在通讯录中，请勿重复添加”；证据 `docs/screenshots/f2-duplicate-contact.png`。不重复已通过的主流程测试。
 
@@ -35,7 +35,7 @@ v1.0.0 历史交付副本保留于 `artifacts/weixin-1.0.0-emulator-unsigned.hap
 
 F7 已完成：[v1.0.0 Release](https://github.com/Rinyin/weixin/releases/tag/v1.0.0) 提供 HAP、源码标签、清单、SHA-256 和许可附件。包为 49,993,097 字节，ZIP 完整性和公开信息范围检查通过；全部 6 个远端附件的摘要/大小与本地一致，标签固定在构建源码 `515be15`。完整交付说明见 `docs/DELIVERY.md`，无凭据核对日志留本机 `.local/release-verification.json`。F7 完成时模拟器为标准字号、本地体验主页，原 3000 反向转发保留。
 
-F8 验证：AppScope、entry 的新 `app_icon.png` 与用户图片逐字节相同；应用/入口/启动窗口三个图标引用一致，AppScope 和默认/zh_CN/en_US 的名称均为“微信”。实际桌面裁剪截图 `f8-launcher-icon-name.png`、系统启动画面 `f8-start-window.jpeg`、启动后登录页 `f8-launch-login.png`。日志 `.local/build-F8.log`、`.local/install-F8.log`；当前包 50,029,903 字节，SHA-256 `caad2ec7d926f767302615738d7500920e871e7604f445dc45c2af9b5f956d8b`，66 个 ZIP 条目完整性通过。下一步提交功能后发布 v1.0.1，并更新下载/交付记录；模拟器目前停在标准字号登录页。
+F8 已完成：AppScope、entry 的新 `app_icon.png` 与用户图片逐字节相同；应用/入口/启动窗口三个图标引用一致，AppScope 和默认/zh_CN/en_US 的名称均为“微信”。实际桌面裁剪截图 `f8-launcher-icon-name.png`、系统启动画面 `f8-start-window.jpeg`、启动后登录页 `f8-launch-login.png`。日志 `.local/build-F8.log`、`.local/install-F8.log`；当前包 50,029,903 字节，SHA-256 `caad2ec7d926f767302615738d7500920e871e7604f445dc45c2af9b5f956d8b`，66 个 ZIP 条目完整性通过。[v1.0.1 Release](https://github.com/Rinyin/weixin/releases/tag/v1.0.1) 的 6 个附件大小和摘要均与本地一致，源码标签为 `7ec73b6`；交付副本在 `artifacts/v1.0.1/`，核对记录为 `.local/release-verification-v1.0.1.json`。模拟器停在标准字号登录页，原 3000 反向转发保留。
 
 先运行 `git status --short --branch`，检查是否有用户在上一轮之后新增的修改。工作区代码优先于本段描述；功能最新完成情况以 [PROGRESS.md](PROGRESS.md) 和 Git 历史为准。
 
