@@ -19,7 +19,7 @@
 
 ## 接续点（2026-10-10）
 
-本轮已从 F5 检查点继续，**F6 已完成并通过必要构建和现有模拟器验证**；下一项 F7 为最终交付。不要重复 F0–F6 已通过的无关测试。
+本轮已从 F5 检查点继续，**F0–F7 全部完成**。F6 已验证并提交为 `515be15`，F7 已公开交付 v1.0.0。当前没有待实现功能或外部阻塞，不要从旧接续点重做，也不要重复已通过的无关测试。
 
 F0–F2 已验证。F2 本轮补验：再次添加“小陈 / course_friend_01”，页面显示“该微信号已在通讯录中，请勿重复添加”；证据 `docs/screenshots/f2-duplicate-contact.png`。不重复已通过的主流程测试。
 
@@ -31,7 +31,9 @@ F5 已完成：`ProfileService`、`EditProfile`、`Settings`、`FontSettings`；
 
 F6 已完成：Axios 2.2.15、`AuthModels`、`AuthService`、`SessionStore`、`Login`；入口改为登录页，Index 显示会话模式，设置显示独立联机资料并可退出；INTERNET 权限已简化。真实取码、倒计时、错误码拒绝、login/info、连接失败、请求中退出到本地、140% 字号及联机状态冷启动均通过，截图 `f6-*`。契约见 `docs/AUTH_API.md`，详细证据见测试报告。token 不持久化，验证码控件与工具输出均遮蔽。Axios MIT 许可已放入 rawfile 随 HAP 打包。
 
-当前可安装产物为 F6 构建：`entry/build/default/outputs/default/entry-default-unsigned.hap`，已在现有模拟器安装通过。构建/安装输出为 `.local/build-F6.log`、`.local/install-F6.log`。F7 应复用这个已验证二进制，整理产物与校验信息，不因仅改文档重复构建。历史提交：F2 补验 `6a83e55`、F3 `4781846`、F4 `7b4b23e`、F5 `5fbf752`；后续提交以 Git 历史为准，验收详情见 [实际验证记录](TEST_REPORT.md)。
+已交付产物为 F6 构建的同一 HAP：原始输出 `entry/build/default/outputs/default/entry-default-unsigned.hap`，本机交付副本 `artifacts/weixin-1.0.0-emulator-unsigned.hap`；已在现有模拟器安装通过。构建/安装输出为 `.local/build-F6.log`、`.local/install-F6.log`。F7 仅整理产物和文档，没有重跑无关构建或测试。历史提交：F2 补验 `6a83e55`、F3 `4781846`、F4 `7b4b23e`、F5 `5fbf752`、F6 `515be15`；交付文档提交以 Git 历史为准，验收详情见 [实际验证记录](TEST_REPORT.md)。
+
+F7 已完成：[v1.0.0 Release](https://github.com/Rinyin/weixin/releases/tag/v1.0.0) 提供 HAP、源码标签、清单、SHA-256 和许可附件。包为 49,993,097 字节，ZIP 完整性和公开信息范围检查通过；全部 6 个远端附件的摘要/大小与本地一致，标签固定在构建源码 `515be15`。完整交付说明见 `docs/DELIVERY.md`，无凭据核对日志留本机 `.local/release-verification.json`。模拟器当前为标准字号、本地体验主页，原 3000 反向转发保留。
 
 先运行 `git status --short --branch`，检查是否有用户在上一轮之后新增的修改。工作区代码优先于本段描述；功能最新完成情况以 [PROGRESS.md](PROGRESS.md) 和 Git 历史为准。
 
