@@ -17,13 +17,13 @@
 - 用户确认本机已启动 `word-api`，已通过本机在线 Swagger 核对契约；不要继续尝试报告中过期的私网地址。
 - 当前任务持续进行中，用户提出“如何让新对话接手”不表示取消原来的全部开发任务。
 
-## 接续点（2026-10-09）
+## 接续点（2026-10-10）
 
-本轮按用户要求于北京时间 23:50 左右收尾暂停（用户需关机，最迟不得超过 23:58）。下次用户要求继续即恢复，不要把已过期的当日截止时间当成新的限制。
+用户已要求继续，上一轮关机截止时间已失效。
 
-F0、F1 已验证并提交；F2 已构建、安装并验证主要流程：新增“小陈”（`course_friend_01`）、资料页发消息、字母索引跳转、强制停止重启后联系人及消息保留、按微信号搜索。**仅重复添加错误提示尚待补验**：最后点击“添加到通讯录”后 HDC UITest dumpLayout 连续超时，未获得提示截图；不要把它记成通过，也不要未经检查就判定应用崩溃。
+F0–F2 已验证。F2 本轮补验：再次添加“小陈 / course_friend_01”，页面显示“该微信号已在通讯录中，请勿重复添加”；证据 `docs/screenshots/f2-duplicate-contact.png`。不重复已通过的主流程测试。
 
-下次先确认 DevEco、模拟器、word-api 是否重新启动，补验重复账号提示；随后继续 F3。当前代码已经编译并通过上述主要流程，无需重复开发或整套重测 F0/F1。发现和我仍为原始静态页面；朋友圈、视频号、个人设置、登录和汇报材料未完成。
+接下来实现 F3 朋友圈、我的朋友圈及持久化互动，然后依次推进 F4–F7。发现和我仍为原始静态页面；视频号须同时提供发现/我入口；最终提交实验记录和 10 分钟汇报 PPT。
 
 F2 最新构建与安装输出在 `.local/build-F2.log`、`.local/install-F2.log`；截图 `docs/screenshots/f2-*.png`。Git 哈希查 `git log -3 --oneline`。
 
@@ -33,11 +33,11 @@ F2 最新构建与安装输出在 `.local/build-F2.log`、`.local/install-F2.log
 
 - DevEco 已打开本工程，安装目录为 `C:/Program Files/Huawei/DevEco Studio`；同目录 SDK、Node、Hvigor 可用。
 - Git Bash：`bash tools/build.sh > .local/build-F1.log 2>&1`。构建通常 8–15 秒，不需重装环境。
-- HDC：`C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/toolchains/hdc.exe`；当前目标 `127.0.0.1:5555`。先 `list targets` 检查新会话时是否仍在线。
+- HDC：`C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/toolchains/hdc.exe`；2026-10-10 当前目标 `127.0.0.1:5557`。先 `list targets` 检查新会话时是否仍在线。
 - `hdc install -r entry/build/default/outputs/default/entry-default-unsigned.hap` 在当前模拟器已成功，不必为它额外配置签名。
 - `python tools/device.py launch|snapshot|tap x y|text x y 文本|back|stop` 控制真实模拟器并输出布局；`--shot 名称` 保存实际截图到 `docs/screenshots/`。图片用 FastCtx 查看。
 - 本轮缺少 computer-use 的 `node_repl` 入口，不是应用失败；通过 DevEco 配套 Hvigor + HDC 实际编译/安装/交互。如果新对话拥有原生窗口工具，可直接使用已运行窗口。
-- 本轮曾执行 `hdc rport tcp:3000 tcp:3000`；关机重启后需重新检查/建立转发，F6 尚须在应用中验证。避免重启无关服务。
+- 2026-10-10 已确认 DevEco、模拟器及本机 Swagger 在线；F6 前重新检查/建立 `hdc rport tcp:3000 tcp:3000`，尚须在应用中验证。避免重启无关服务。
 
 ## 后端契约与实现提醒
 
