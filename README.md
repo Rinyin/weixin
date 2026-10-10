@@ -4,6 +4,8 @@
 
 开发工具为 DevEco Studio 6.0.2，目标 SDK 为 HarmonyOS 6.0.2 (API 22)，兼容 API 20；在鸿蒙模拟器中验证。公开仓库为 [Rinyin/weixin](https://github.com/Rinyin/weixin)。
 
+应用在系统中显示为“微信”，桌面和系统启动页均使用用户提供的微信图标。
+
 实现范围与实际验证进度见 [功能进度](docs/PROGRESS.md)，协作和编写规范见 [AGENTS.md](AGENTS.md)。功能按独立 Git 提交推进，便于中断后继续。
 
 重开对话时，使用固定的 [接手入口与提示词](docs/HANDOFF.md) 继续任务。
@@ -45,6 +47,6 @@ hdc_bin="$deveco_root/sdk/default/openharmony/toolchains/hdc.exe"
 
 ## 许可证与素材
 
-源代码采用 [GNU Affero General Public License v3.0](LICENSE)（AGPL-3.0-only）。本项目原有头像、插图、音视频来自课程提供的工程素材，保留其原有权利归属；代码许可证不表示对第三方素材拥有额外授权。
+源代码采用 [GNU Affero General Public License v3.0](LICENSE)（AGPL-3.0-only）。桌面和启动页图标由用户提供，原图保存在 `AppScope/resources/base/media/app_icon.png` 和 entry 同名资源中。本项目原有头像、插图、音视频来自课程提供的工程素材；上述素材均保留原有权利归属，代码许可证不表示对第三方素材拥有额外授权。
 
 Axios 等依赖及随 HAP 分发的许可说明见 [第三方声明](THIRD_PARTY_NOTICES.md)。

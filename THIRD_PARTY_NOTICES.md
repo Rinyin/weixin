@@ -1,6 +1,6 @@
 # 第三方声明
 
-本项目源代码采用 AGPL-3.0-only，见 [LICENSE](LICENSE)。原有课程图片、头像和音视频保留原权利归属，代码许可证不额外授予素材权利。
+本项目源代码采用 AGPL-3.0-only，见 [LICENSE](LICENSE)。桌面及启动页图标由用户提供，原有图片、头像和音视频来自课程工程；这些素材保留原权利归属，代码许可证不额外授予素材权利。
 
 运行时依赖 `@ohos/axios` 2.2.15，来源为 [OpenHarmony 三方库中心](https://ohpm.openharmony.cn/#/cn/detail/@ohos%2Faxios)。其安装包提供 MIT 许可，完整版权及许可正文保存在 [axios-LICENSE.txt](entry/src/main/resources/rawfile/axios-LICENSE.txt)，该文件同时打包进 HAP 的 rawfile 资源。
 
