@@ -81,4 +81,28 @@ export class AppStore {
   static id(prefix: string): string {
     return prefix + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
   }
+
+  static async setFontScale(scale: number): Promise<void> {
+    if (!AppStore.writable || !Number.isFinite(scale)) {
+      throw new Error('本地设置尚不可写入');
+    }
+    const value = Math.round(Math.min(1.4, Math.max(0.85, scale)) * 100) / 100;
+    const current = AppStore.writeQueue.then(async () => {
+      const previous = AppStorage.get<number>('fontScale') || 1;
+      try {
+        await AppStore.settings.put('fontScale', value);
+        await AppStore.settings.flush();
+      } catch {
+        // flush 失败时还原 Preferences 缓存，防止以后的刷新写入报错过的字号。
+        await AppStore.settings.put('fontScale', previous);
+        throw new Error('字体设置未能写入设备');
+      }
+      AppStorage.setOrCreate('fontScale', value);
+      AppStorage.setOrCreate('storeError', '');
+    });
+    AppStore.writeQueue = current.catch(() => {
+      AppStorage.setOrCreate('storeError', '字体设置保存失败，请检查设备存储后重试。');
+    });
+    return current;
+  }
 }

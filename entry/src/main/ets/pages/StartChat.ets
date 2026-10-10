@@ -13,7 +13,7 @@ struct StartChat {
     Column() {
       PageHeader({ title: '发起聊天' })
       Search({ value: this.query, placeholder: '搜索朋友' }).textFont({ size: 16 * this.fontScale })
-        .placeholderFont({ size: 16 * this.fontScale })
+        .placeholderFont({ size: 16 * this.fontScale }).height(40 * this.fontScale)
         .margin({ left: 14, right: 14, bottom: 12 }).onChange((text: string) => { this.query = text; })
       List() {
         ForEach(AppStore.data.contacts.filter((item: Contact) => item.name.includes(this.query.trim()) ||
@@ -21,7 +21,7 @@ struct StartChat {
           ListItem() {
             Row({ space: 14 }) {
               Image(avatarResource(item.avatar)).width(46).height(46).borderRadius(7)
-              Text(item.name).fontSize(17 * this.fontScale)
+              Text(item.name).fontSize(17 * this.fontScale).layoutWeight(1)
             }.padding(16).width('100%').backgroundColor(Color.White)
           }.onClick(() => {
             this.getUIContext().getRouter().replaceUrl({ url: 'pages/Chat', params: { contactId: item.id } });

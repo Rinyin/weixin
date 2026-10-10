@@ -12,6 +12,8 @@
 | F3 重启保留 | 强制停止并重新启动应用 → 发现/朋友圈 → 下滑查看原动态 | 通过；新发表的图文、敖丙动态的点赞和评论均保留 | [发表保留](screenshots/f3-restart-published.png)、[互动保留](screenshots/f3-restart-interaction.png) |
 | F4 播放与切换 | 2026-10-10 构建安装 → 发现/视频号 → 播放首段 → 暂停 → 下一条并播放 → 再切第三条 | 通过；真实画面变化、进度从 00:01 增至 00:47；暂停后两次读取均为 00:49；三个源均能播放 | [播放](screenshots/f4-video-playing.png)、[暂停](screenshots/f4-video-paused.png)、[第二段](screenshots/f4-video-second.png)、[第三段](screenshots/f4-video-third.png) |
 | F4 生命周期与入口 | 播放时回到桌面 → 重新进入 → 返回发现 → 我/视频号；退出前后读取系统播放器服务 | 通过；后台恢复为已暂停；返回正常；“我”入口从 00:00 就绪；退出前 PlayerServer 有 1 个实例，退出后为 0 个 | [后台暂停](screenshots/f4-background-paused.png)、[返回](screenshots/f4-return-discover.png)、[我的入口](screenshots/f4-profile-entry.png)；系统取证留本机 `.local/`，未开展压力或内存泄漏测试 |
+| F5 个人资料 | 2026-10-10 编辑昵称/头像/地区/签名；空昵称保存；修改成功后打开我的朋友圈；强制停止重启 | 通过；空昵称明确拒绝；“我”和朋友圈同步昵称/头像；重启后全部字段保留 | [保存](screenshots/f5-profile-saved.png)、[朋友圈同步](screenshots/f5-moments-font.png)、[重启资料](screenshots/f5-profile-persisted.png) |
+| F5 全局字体 | 设置中应用 140%；检查四 Tabs、联系人详情、聊天、弹窗与键盘、朋友圈及视频页；重启后进入字体设置；验后恢复 100% | 通过；字号同步、关键按钮可达、无观察到的文字遮挡；重启仍显示 140%，恢复标准字号成功 | [大字号](screenshots/f5-font-largest.png)、[通讯录](screenshots/f5-contacts-font.png)、[详情](screenshots/f5-contact-detail-font.png)、[聊天](screenshots/f5-chat-font.png)、[键盘弹窗](screenshots/f5-editor-keyboard.png)、[发现](screenshots/f5-discover-font.png)、[视频](screenshots/f5-video-font.png)、[重启字号](screenshots/f5-restart-font.png) |
 
 构建详细输出保存在本机忽略目录 `.local/`。每项仅进行必要构建和相关功能操作；未运行与改动无关的压力测试或测试模板。
 

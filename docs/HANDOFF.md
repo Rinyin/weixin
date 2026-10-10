@@ -27,7 +27,9 @@ F3 已完成：`Moments`、`PublishMoment`、`MomentsService`、`MenuRow`；发�
 
 F4 已完成：`VideoChannel`、`VideoData` 和发现/我入口；三个 MP4 均实际播放，暂停、切换、后台恢复保持暂停通过。退出前后 `PlayerDistributedService` 取证显示播放器实例 1 → 0，本机日志 `.local/f4-player-{active,exited}.txt`，截图 `f4-*`。构建 `.local/build-F4.log`，SDK 的 `VideoController` 无 release 方法，资源随组件销毁管理。
 
-下一项 F5：个人资料编辑、设置及全局字体；朋友圈头部资料需用受追踪状态刷新，通讯录字母索引字号需接入缩放。随后 F6 登录、F7 可安装 HAP。
+F5 已完成：`ProfileService`、`EditProfile`、`Settings`、`FontSettings`；资料及字号持久化、空昵称校验、资料跨页同步通过。140% 字号下四 Tabs、联系人详情、聊天/弹窗及键盘、朋友圈、视频布局检查通过；重启资料和字号保留。截图 `f5-*`，构建 `.local/build-F5.log`。已恢复标准字号；本机课程资料为“小林同学 / 湖北 · 武汉 / 认真学习，记录生活。”及 avatar2。`device.py replace-text-id` 可替换已有字段；原 `text-id` 会追加文本。
+
+下一项 F6：安装 `@ohos/axios`、建立 3000 端口转发、接入验证码登录与 info；登录/本地体验明确区分。库使用 `AbortController` 取消，timeout 和 connectTimeout 均配置；不要输出验证码或 token。随后 F7 交付可安装 HAP。
 
 F2 最新构建与安装输出在 `.local/build-F2.log`、`.local/install-F2.log`；截图 `docs/screenshots/f2-*.png`。Git 哈希查 `git log -3 --oneline`。
 

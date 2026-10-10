@@ -22,7 +22,11 @@ export struct Profile {
             Text('微信号：' + this.profile.account).fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY)
             Text(this.profile.signature).fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY)
           }.layoutWeight(1).alignItems(HorizontalAlign.Start)
-        }.width('100%').padding({ left: 24, right: 24, top: 44, bottom: 32 }).backgroundColor(Color.White)
+          Text('›').fontSize(25).fontColor(TEXT_SECONDARY)
+        }.id('profile-details').width('100%').padding({ left: 24, right: 24, top: 44, bottom: 32 }).backgroundColor(Color.White)
+          .accessibilityText('编辑个人资料').onClick(() => {
+            this.getUIContext().getRouter().pushUrl({ url: 'pages/EditProfile' });
+          })
       }
       ListItem() {
         MenuRow({ title: '我的朋友圈', rowId: 'profile-moments', icon: $r('app.media.pic'), color: '#4374C1', onOpen: () => {
@@ -32,6 +36,11 @@ export struct Profile {
       ListItem() {
         MenuRow({ title: '视频号', rowId: 'profile-video', icon: $r('app.media.shipinhao'), color: '#F4A13C', onOpen: () => {
           this.getUIContext().getRouter().pushUrl({ url: 'pages/VideoChannel' });
+        } })
+      }
+      ListItem() {
+        MenuRow({ title: '设置', rowId: 'profile-settings', icon: $r('app.media.setting'), color: '#3F72C5', onOpen: () => {
+          this.getUIContext().getRouter().pushUrl({ url: 'pages/Settings' });
         } })
       }
     }.height('100%').width('100%').backgroundColor(BACKGROUND)

@@ -7,6 +7,9 @@
     "pages/ContactDetail",
     "pages/Moments",
     "pages/PublishMoment",
-    "pages/VideoChannel"
+    "pages/VideoChannel",
+    "pages/EditProfile",
+    "pages/Settings",
+    "pages/FontSettings"
 	]
 }

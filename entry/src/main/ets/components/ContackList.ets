@@ -84,8 +84,10 @@ export struct ContackList {
           .onScrollIndex((first: number) => { this.selectedIndex = Math.max(0, Math.min(this.initials.length - 1, first - 1)); })
         if (this.initials.length > 1) {
           AlphabetIndexer({ arrayValue: this.initials, selected: this.selectedIndex })
+            .font({ size: 13 * this.fontScale }).selectedFont({ size: 13 * this.fontScale })
+            .popupFont({ size: 22 * this.fontScale }).popupItemFont({ size: 16 * this.fontScale })
             .selectedColor(Color.White).selectedBackgroundColor(GREEN).color(TEXT_SECONDARY)
-            .itemSize(23).margin({ right: 3 }).onSelect((index: number) => {
+            .itemSize(23 * this.fontScale).margin({ right: 3 }).onSelect((index: number) => {
               this.selectedIndex = index;
               this.scroller.scrollToIndex(index + 1, true, ScrollAlign.START);
             })

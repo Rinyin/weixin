@@ -35,10 +35,11 @@ struct ContactDetail {
                 Text('微信号：' + this.contact.account).fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY)
               }.layoutWeight(1).alignItems(HorizontalAlign.Start)
             }.padding(24).width('100%').backgroundColor(Color.White)
-            List() {
-              ListItem() { this.detail('地区', this.contact.region) }
-              ListItem() { this.detail('个性签名', this.contact.signature) }
-            }.width('100%').height(160 * this.fontScale).divider({ strokeWidth: 0.5, color: '#EEEEEE' })
+            Column() {
+              this.detail('地区', this.contact.region)
+              Divider().color('#EEEEEE')
+              this.detail('个性签名', this.contact.signature)
+            }.width('100%')
             Button('发消息', { type: ButtonType.Normal }).id('contact-message')
               .fontSize(18 * this.fontScale).fontColor(GREEN).fontWeight(FontWeight.Medium)
               .width('100%').height(58 * this.fontScale).backgroundColor(Color.White)
@@ -46,7 +47,7 @@ struct ContactDetail {
                 url: 'pages/Chat', params: { contactId: this.contact?.id || '' }
               }))
           }.width('100%')
-        }.layoutWeight(1).width('100%')
+        }.align(Alignment.TopStart).layoutWeight(1).width('100%')
       } else {
         Text('未找到联系人，请返回通讯录。').fontSize(16 * this.fontScale).padding(24)
       }

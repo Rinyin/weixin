@@ -107,7 +107,7 @@ def snapshot(shot=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=['launch', 'stop', 'snapshot', 'tap', 'text', 'back', 'swipe',
-                                          'click-id', 'text-id', 'click-text'])
+                                          'click-id', 'text-id', 'replace-text-id', 'click-text'])
     parser.add_argument('values', nargs='*')
     parser.add_argument('--shot')
     args = parser.parse_args()
@@ -116,8 +116,8 @@ def main():
         return
     if args.action == 'launch':
         print(shell('aa', 'start', '-a', 'EntryAbility', '-b', BUNDLE))
-    elif args.action in ('click-id', 'text-id', 'click-text'):
-        expected = 2 if args.action == 'text-id' else 1
+    elif args.action in ('click-id', 'text-id', 'replace-text-id', 'click-text'):
+        expected = 2 if args.action in ('text-id', 'replace-text-id') else 1
         if len(args.values) != expected:
             parser.error(f'{args.action} requires {"<id> <text>" if expected == 2 else "<exact text>" if args.action == "click-text" else "<id>"}')
         field = 'text' if args.action == 'click-text' else 'id'
@@ -125,7 +125,14 @@ def main():
             x, y = target_center(field, args.values[0])
         except (OSError, ValueError, subprocess.CalledProcessError) as error:
             parser.error(str(error))
-        if args.action == 'text-id':
+        if args.action == 'replace-text-id':
+            shell('uitest', 'uiInput', 'click', x, y)
+            shell('uitest', 'uiInput', 'keyEvent', 2072, 2017)  # Ctrl+A selects the existing value.
+            if args.values[1]:
+                print(shell('uitest', 'uiInput', 'text', args.values[1]))
+            else:
+                print(shell('uitest', 'uiInput', 'keyEvent', 2055))  # Delete selected text.
+        elif args.action == 'text-id':
             print(shell('uitest', 'uiInput', 'inputText', x, y, args.values[1]))
         else:
             print(shell('uitest', 'uiInput', 'click', x, y))

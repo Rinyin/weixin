@@ -1,7 +1,7 @@
 import { PageHeader } from '../components/PageHeader';
 import { ListDataSource } from '../common/ListDataSource';
 import { avatarResource, BACKGROUND, GREEN, LINK_COLOR, momentImage, TEXT_SECONDARY, timeLabel } from '../common/Theme';
-import { MomentComment, MomentsRoute } from '../model/Models';
+import { MomentComment, MomentsRoute, UserProfile } from '../model/Models';
 import { AppStore } from '../services/AppStore';
 import { MomentsService, MomentView } from '../services/MomentsService';
 
@@ -11,6 +11,7 @@ struct Moments {
   @StorageLink('fontScale') fontScale: number = 1;
   @StorageLink('revision') @Watch('refresh') revision: number = 0;
   @State mineOnly: boolean = false;
+  @State profile: UserProfile = AppStore.data.profile;
   @State count: number = 0;
   @State busy: boolean = false;
   @State error: string = '';
@@ -27,6 +28,7 @@ struct Moments {
   onPageShow(): void { this.refresh(); }
 
   refresh(): void {
+    this.profile = AppStore.data.profile;
     const items = MomentsService.list(this.mineOnly);
     this.count = items.length;
     this.source.replace(items);
@@ -98,8 +100,8 @@ struct Moments {
           Column({ space: 12 }) {
             Image(momentImage('img1')).width('100%').height(155).objectFit(ImageFit.Cover)
             Row({ space: 12 }) {
-              Text(AppStore.data.profile.name).fontSize(21 * this.fontScale).fontWeight(FontWeight.Bold).layoutWeight(1)
-              Image(avatarResource(AppStore.data.profile.avatar)).width(52).height(52).borderRadius(8)
+              Text(this.profile.name).fontSize(21 * this.fontScale).fontWeight(FontWeight.Bold).layoutWeight(1)
+              Image(avatarResource(this.profile.avatar)).width(52).height(52).borderRadius(8)
             }.width('100%').padding({ left: 20, right: 20 })
             Text(this.mineOnly ? '只展示我发表的内容' : '朋友们的生活片刻')
               .fontSize(13 * this.fontScale).fontColor(TEXT_SECONDARY).padding({ bottom: 16 })
