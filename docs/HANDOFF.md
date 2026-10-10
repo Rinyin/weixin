@@ -15,11 +15,11 @@
 - 用户要求随时可中断，因此每项完成后记录证据并独立提交。不要大量测试或创建不必要备份。
 - 用户后续明确仓库应为**公开 GitHub + AGPL-3.0**，README 明示课程作业；仓库地址见 [README](../README.md) 及 Git remote。
 - 本机已启动 `word-api`，已通过在线 Swagger 核对契约；使用本机服务地址。
-- 当前任务持续进行中，用户提出“如何让新对话接手”不表示取消原来的全部开发任务。
+- 一次推进一项功能：实现、必要构建、现有模拟器验证、更新记录、独立提交。
 
 ## 接续点（2026-10-10）
 
-用户已要求继续，上一轮关机截止时间已失效。
+按用户要求，在 **F5 已完成并验证的检查点暂停**，准备新建对话。下次从 F6 登录开始；不要重复 F0–F5 已通过的无关测试。
 
 F0–F2 已验证。F2 本轮补验：再次添加“小陈 / course_friend_01”，页面显示“该微信号已在通讯录中，请勿重复添加”；证据 `docs/screenshots/f2-duplicate-contact.png`。不重复已通过的主流程测试。
 
@@ -29,21 +29,21 @@ F4 已完成：`VideoChannel`、`VideoData` 和发现/我入口；三个 MP4 均
 
 F5 已完成：`ProfileService`、`EditProfile`、`Settings`、`FontSettings`；资料及字号持久化、空昵称校验、资料跨页同步通过。140% 字号下四 Tabs、联系人详情、聊天/弹窗及键盘、朋友圈、视频布局检查通过；重启资料和字号保留。截图 `f5-*`，构建 `.local/build-F5.log`。已恢复标准字号；本机课程资料为“小林同学 / 湖北 · 武汉 / 认真学习，记录生活。”及 avatar2。`device.py replace-text-id` 可替换已有字段；原 `text-id` 会追加文本。
 
-下一项 F6：安装 `@ohos/axios`、建立 3000 端口转发、接入验证码登录与 info；登录/本地体验明确区分。库使用 `AbortController` 取消，timeout 和 connectTimeout 均配置；不要输出验证码或 token。随后 F7 交付可安装 HAP。
+下一项 F6 尚未实现，Axios 依赖未安装，工作区没有未完成的登录代码。先安装固定版本 `@ohos/axios: 2.2.15`，再实现登录页、API 服务和明确的本地体验入口；随后 F7 交付可安装 HAP。`EntryAbility` 当前直接进入 Index，需在 F6 接入登录入口；`module.json5` 的 INTERNET 权限 usedScene 仍写为 Index，应改为 EntryAbility 或简化为权限 name。
 
-F2 最新构建与安装输出在 `.local/build-F2.log`、`.local/install-F2.log`；截图 `docs/screenshots/f2-*.png`。Git 哈希查 `git log -3 --oneline`。
+当前可安装产物为 F5 构建：`entry/build/default/outputs/default/entry-default-unsigned.hap`，已在现有模拟器安装通过。构建/安装输出为 `.local/build-F5.log`、`.local/install-F5.log`。本轮提交：F2 补验 `6a83e55`、F3 `4781846`、F4 `7b4b23e`、F5 `5fbf752`；验收详情见 [实际验证记录](TEST_REPORT.md)。
 
 先运行 `git status --short --branch`，检查是否有用户在上一轮之后新增的修改。工作区代码优先于本段描述；功能最新完成情况以 [PROGRESS.md](PROGRESS.md) 和 Git 历史为准。
 
 ## 已确认的运行通道
 
 - DevEco 已打开本工程，安装目录为 `C:/Program Files/Huawei/DevEco Studio`；同目录 SDK、Node、Hvigor 可用。
-- Git Bash：`bash tools/build.sh > .local/build-F1.log 2>&1`。构建通常 8–15 秒，不需重装环境。
+- Git Bash：`bash tools/build.sh > .local/build-F6.log 2>&1`。构建通常 8–15 秒，不需重装环境。
 - HDC：`C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/toolchains/hdc.exe`；2026-10-10 当前目标 `127.0.0.1:5557`。先 `list targets` 检查新会话时是否仍在线。
 - `hdc install -r entry/build/default/outputs/default/entry-default-unsigned.hap` 在当前模拟器已成功，不必为它额外配置签名。
-- `python tools/device.py launch|snapshot|tap x y|text x y 文本|back|stop` 控制真实模拟器并输出布局；`--shot 名称` 保存实际截图到 `docs/screenshots/`。图片用 FastCtx 查看。
+- `python tools/device.py launch|snapshot|tap x y|text x y 文本|back|stop` 控制真实模拟器并输出布局；支持 `click-id`、`click-text`、`replace-text-id`，`--shot 名称` 保存实际截图到 `docs/screenshots/`。冷启动后需等页面稳定再查节点；不要把短暂的桌面布局当作应用崩溃。
 - 本轮缺少 computer-use 的 `node_repl` 入口，不是应用失败；通过 DevEco 配套 Hvigor + HDC 实际编译/安装/交互。如果新对话拥有原生窗口工具，可直接使用已运行窗口。
-- 2026-10-10 已确认 DevEco、模拟器及本机 Swagger 在线；F6 前重新检查/建立 `hdc rport tcp:3000 tcp:3000`，尚须在应用中验证。避免重启无关服务。
+- 2026-10-10 已确认 DevEco、模拟器及本机 Swagger 在线，已建立 `hdc rport tcp:3000 tcp:3000`；下次检查转发是否仍有效，F6 尚须在应用中验证。避免重启无关服务。
 
 ## 后端契约与实现提醒
 
@@ -56,6 +56,8 @@ Swagger `http://127.0.0.1:3000/doc/swagger-api`，OpenAPI 为同路径加 `-json
 - 实际测试使用虚构的课程手机号。不要将会话 token 或验证码写入仓库；不要把离线体验写成真实登录通过。
 - ArkTS 静态方法内部不可用 `this`，用类名；`Search` 字体使用 `textFont` / `placeholderFont`。
 - AppStore 对初始化失败设置禁止写入，避免种子数据覆盖旧文件；后续保留该保护。
+- Axios 2.2.15 已只读核对：从库导入 `AbortController` 并传 signal，鸿蒙不支持 CancelToken；同时配置 `timeout`、`connectTimeout`（如各 10000ms）。页面退出取消请求、清理倒计时，并防止迟到响应导航。不启用请求复用或 API 23/26 的额外选项。
+- token 建议仅保存在会话内存，单独传给 info 请求；联机资料与本地课程资料分开。不要打印 Axios 错误对象、请求体、验证码或 token；截图使用虚构数据并遮蔽凭据。登录失败不能自动冒充成功。
 
 ## 更新规则和技能
 
