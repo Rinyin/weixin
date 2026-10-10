@@ -2,7 +2,7 @@ import { common } from '@kit.AbilityKit';
 import { fileIo } from '@kit.CoreFileKit';
 import { preferences } from '@kit.ArkData';
 import { AppData, Contact } from '../model/Models';
-import { seedData } from '../model/SeedData';
+import { seedData, seedMoments } from '../model/SeedData';
 
 // 记录使用沙箱 JSON 原子替换；小型设置使用 Preferences，避免大 JSON 超过其单值限制。
 export class AppStore {
@@ -23,12 +23,18 @@ export class AppStore {
       AppStorage.setOrCreate('fontScale', Math.min(1.4, Math.max(0.85, scale)));
       if (fileIo.accessSync(AppStore.dataPath)) {
         const saved = JSON.parse(fileIo.readTextSync(AppStore.dataPath)) as AppData;
-        if (saved.version !== 1 || !Array.isArray(saved.contacts) || !Array.isArray(saved.messages) ||
+        if ((saved.version !== 1 && saved.version !== 2) || !Array.isArray(saved.contacts) || !Array.isArray(saved.messages) ||
           !Array.isArray(saved.moments) || !saved.profile) {
           throw new Error('数据格式不兼容');
         }
         AppStore.data = saved;
         AppStore.writable = true;
+        if (saved.version === 1) {
+          // F3 一次性迁移；不替换已保存的联系人、消息或个人资料。
+          if (saved.moments.length === 0) { saved.moments = seedMoments(); }
+          saved.version = 2;
+          await AppStore.save();
+        }
       } else {
         AppStore.writable = true;
         await AppStore.save();

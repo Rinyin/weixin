@@ -23,3 +23,11 @@ export function timeLabel(value: number): string {
   }
   return (date.getMonth() + 1).toString() + '/' + date.getDate().toString();
 }
+
+export function momentImage(name: string): Resource {
+  switch (name) {
+    case 'cherry': return $r('app.media.cherry');
+    case 'dog': return $r('app.media.dog');
+    default: return $r('app.media.img1');
+  }
+}

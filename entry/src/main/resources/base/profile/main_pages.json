@@ -4,6 +4,8 @@
     "pages/Chat",
     "pages/StartChat",
     "pages/AddFriend",
-    "pages/ContactDetail"
+    "pages/ContactDetail",
+    "pages/Moments",
+    "pages/PublishMoment"
 	]
 }

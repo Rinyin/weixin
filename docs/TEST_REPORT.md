@@ -8,6 +8,8 @@
 | F1 聊天 | 打开虎子会话 → 中文消息“周末一起去海边吧” → 表情面板选择 😊 → 展开弹窗发送 → 强制停止并重启 → 搜索旧关键词“周末” → ＋选择虎子 | 通过；空消息禁用；两条消息均保留，列表预览刷新，旧关键词仍可搜索；弹窗/表情可用 | [会话列表](screenshots/f1-chats.png)、[消息](screenshots/f1-chat-message.png)、[表情与重启后消息](screenshots/f1-emoji-panel.png)、[输入弹窗](screenshots/f1-message-editor.png) |
 | F2 通讯录主流程 | 通讯录 T 索引 → 添加“小陈 / course_friend_01” → 查看资料 → 发消息“你好，很高兴认识你！” → 强制停止重启 → 按微信号搜索 | 通过；联系人和消息保留，详情进入对应会话，索引能滚动到目标组 | [列表](screenshots/f2-contacts.png)、[新增](screenshots/f2-add-friend.png)、[详情](screenshots/f2-contact-detail.png)、[新会话](screenshots/f2-new-chat.png)、[重启搜索](screenshots/f2-search-persisted.png) |
 | F2 重复添加提示 | 2026-10-10，在现有模拟器 `127.0.0.1:5557` 再次填写“小陈 / course_friend_01”，收起键盘后点击添加 | 通过；明确提示“该微信号已在通讯录中，请勿重复添加”，停留当前页 | [重复提示](screenshots/f2-duplicate-contact.png) |
+| F3 朋友圈 | 2026-10-10 构建安装 → 发现/朋友圈浏览两条种子动态 → 点赞敖丙动态并评论“今天也要开心” → 发表文字及猫咪配图 → 我/我的朋友圈 | 通过；旧联系人和消息仍在；点赞评论即时更新；发表返回列表首项；我的朋友圈仅展示自己的动态；空发表和空评论发送按钮禁用 | [浏览](screenshots/f3-moments-feed.png)、[互动](screenshots/f3-interaction.png)、[发表](screenshots/f3-publish.png)、[我的朋友圈](screenshots/f3-my-moments.png) |
+| F3 重启保留 | 强制停止并重新启动应用 → 发现/朋友圈 → 下滑查看原动态 | 通过；新发表的图文、敖丙动态的点赞和评论均保留 | [发表保留](screenshots/f3-restart-published.png)、[互动保留](screenshots/f3-restart-interaction.png) |
 
 构建详细输出保存在本机忽略目录 `.local/`。每项仅进行必要构建和相关功能操作；未运行与改动无关的压力测试或测试模板。
 

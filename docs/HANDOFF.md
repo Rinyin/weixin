@@ -23,7 +23,9 @@
 
 F0–F2 已验证。F2 本轮补验：再次添加“小陈 / course_friend_01”，页面显示“该微信号已在通讯录中，请勿重复添加”；证据 `docs/screenshots/f2-duplicate-contact.png`。不重复已通过的主流程测试。
 
-接下来实现 F3 朋友圈、我的朋友圈及持久化互动，然后依次推进 F4–F7。发现和我仍为原始静态页面；视频号须同时提供发现/我入口；最终提交实验记录和 10 分钟汇报 PPT。
+F3 已完成：`Moments`、`PublishMoment`、`MomentsService`、`MenuRow`；发现/我已接入朋友圈，version 1 → 2 迁移保留旧联系人、消息和资料。实际通过图文浏览、发表、点赞评论、我的朋友圈筛选及强制停止重启保留，截图 `f3-*`，构建输出 `.local/build-F3.log`。当前存有一条“小林”发布的课程动态及敖丙动态上的点赞评论。
+
+下一项 F4：视频号须同时提供发现/我入口，使用本地 MP4，实际验证播放/暂停、切换、返回和后台暂停。SDK `VideoController` 无 release 方法；退出停止，Video 组件销毁管理底层资源，不宣称已做内存泄漏验证。F5 注意朋友圈头部资料也需用受追踪状态刷新。随后继续 F5–F7，最终提交实验记录和 10 分钟汇报 PPT。
 
 F2 最新构建与安装输出在 `.local/build-F2.log`、`.local/install-F2.log`；截图 `docs/screenshots/f2-*.png`。Git 哈希查 `git log -3 --oneline`。
 

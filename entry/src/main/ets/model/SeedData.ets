@@ -1,4 +1,14 @@
-import { AppData, Contact, ChatMessage } from './Models';
+import { AppData, Contact, ChatMessage, Moment } from './Models';
+
+export function seedMoments(): Moment[] {
+  const now = Date.now();
+  return [
+    { id: 'moment-cats', authorId: 'aobing', text: '把今天的好心情分享给你。☀️', image: 'img1',
+      createdAt: now - 3600000, liked: false, comments: [] },
+    { id: 'moment-day', authorId: 'huzi', text: '忙完功课，也别忘记出去走走。', image: 'cherry',
+      createdAt: now - 7200000, liked: false, comments: [] }
+  ];
+}
 
 export function seedData(): AppData {
   const contacts: Contact[] = [
@@ -18,10 +28,10 @@ export function seedData(): AppData {
     { id: 'seed-4', contactId: 'taiyi', text: '修行之余，也要好好吃饭。', mine: false, createdAt: now - 7200000 }
   ];
   return {
-    version: 1,
+    version: 2,
     contacts: contacts,
     messages: messages,
-    moments: [],
+    moments: seedMoments(),
     profile: { name: '小林', account: 'harmony_student', avatar: 'avatar7', region: '中国', signature: '记录生活里的小美好。' }
   };
 }
