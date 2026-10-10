@@ -38,14 +38,7 @@
     "requestPermissions": [
       //网络
       {
-        "name": "ohos.permission.INTERNET",
-        "reason": "$string:reason",
-        "usedScene": {
-          "abilities": [
-            "Index"
-          ],
-          "when": "inuse"
-        }
+        "name": "ohos.permission.INTERNET"
       }
     ],
   }

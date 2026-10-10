@@ -94,7 +94,9 @@ def snapshot(shot=None):
 
     walk(root)
     for item in lines:
-        print(f"{item['type']} {item['id']} {item['text'] or item['hint']} {item['bounds']} enabled={item['enabled']}")
+        # Credentials stay in the ignored device dump, never in console output.
+        label = '[验证码已隐藏]' if item['id'] == 'login-code' and item['text'] else item['text'] or item['hint']
+        print(f"{item['type']} {item['id']} {label} {item['bounds']} enabled={item['enabled']}")
     if shot:
         target = ROOT / 'docs/screenshots' / (shot + '.png')
         target.parent.mkdir(parents=True, exist_ok=True)

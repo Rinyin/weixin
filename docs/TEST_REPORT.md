@@ -14,7 +14,14 @@
 | F4 生命周期与入口 | 播放时回到桌面 → 重新进入 → 返回发现 → 我/视频号；退出前后读取系统播放器服务 | 通过；后台恢复为已暂停；返回正常；“我”入口从 00:00 就绪；退出前 PlayerServer 有 1 个实例，退出后为 0 个 | [后台暂停](screenshots/f4-background-paused.png)、[返回](screenshots/f4-return-discover.png)、[我的入口](screenshots/f4-profile-entry.png)；系统取证留本机 `.local/`，未开展压力或内存泄漏测试 |
 | F5 个人资料 | 2026-10-10 编辑昵称/头像/地区/签名；空昵称保存；修改成功后打开我的朋友圈；强制停止重启 | 通过；空昵称明确拒绝；“我”和朋友圈同步昵称/头像；重启后全部字段保留 | [保存](screenshots/f5-profile-saved.png)、[朋友圈同步](screenshots/f5-moments-font.png)、[重启资料](screenshots/f5-profile-persisted.png) |
 | F5 全局字体 | 设置中应用 140%；检查四 Tabs、联系人详情、聊天、弹窗与键盘、朋友圈及视频页；重启后进入字体设置；验后恢复 100% | 通过；字号同步、关键按钮可达、无观察到的文字遮挡；重启仍显示 140%，恢复标准字号成功 | [大字号](screenshots/f5-font-largest.png)、[通讯录](screenshots/f5-contacts-font.png)、[详情](screenshots/f5-contact-detail-font.png)、[聊天](screenshots/f5-chat-font.png)、[键盘弹窗](screenshots/f5-editor-keyboard.png)、[发现](screenshots/f5-discover-font.png)、[视频](screenshots/f5-video-font.png)、[重启字号](screenshots/f5-restart-font.png) |
+| F6 构建与取码 | 2026-10-10，现有模拟器 `127.0.0.1:5557`；Hvigor 构建、HDC 覆盖安装并冷启动；空手机号取码；虚构课程号码取码；回桌面后重新打开 | 通过；登录页为空手机号给出格式提示；真实服务取码后按钮倒计时且禁用重复请求，倒计时结束恢复；后台恢复由 59 秒变为 57 秒，保留当前输入 | [输入校验](screenshots/f6-login-validation.png)、[取码](screenshots/f6-code-countdown.png)、[后台恢复](screenshots/f6-countdown-resume.png)；本机 `.local/build-F6.log`、`.local/install-F6.log` |
+| F6 业务登录与资料 | 输入错误验证码提交；再填入本次课程验证码登录；我/设置查看联机资料；退出登录 | 通过；错误码明确提示并停留登录页；真实 login 和 info 成功后才进入联机主页；设置显示服务返回的昵称与头像，本地“小林同学”资料保持独立；退出回到清空表单的登录页 | [错误验证码](screenshots/f6-wrong-code.png)、[联机主页](screenshots/f6-online.png)、[联机资料](screenshots/f6-online-profile.png)、[退出](screenshots/f6-sign-out.png) |
+| F6 连接失败 | 暂时移除本应用使用的 3000 反向转发，点击取码；取证后恢复同一转发，未停止后端服务 | 通过；显示“无法连接课程服务”，仍在登录页，可重试或主动进入本地体验；网络失败未被标为登录成功 | [失败提示](screenshots/f6-network-failure.png) |
+| F6 取消与迟到响应 | 本机临时代理转发真实 login/info，将成功的 info 响应延迟 8 秒；“正在登录”时点击本地体验，再等待 9 秒 | 通过；等待中表单与重复提交禁用，本地体验按钮仍可用；迟到响应释放后仍显示“本地体验 · 未登录课程服务”；设置亦显示未登录。代理随后关闭，原转发已恢复 | [等待状态](screenshots/f6-login-pending.png)、[进入本地](screenshots/f6-local.png)、[等待后仍为本地](screenshots/f6-cancelled-stays-local.png)、[本地设置](screenshots/f6-local-settings.png)；无凭据代理日志留本机 `.local/f6-delayed-proxy.log` |
+| F6 新页面字号与冷启动 | 对新登录/设置内容应用 140%；滚动登录页并完成取码、填入和真实登录；联机状态强制停止、重新打开；进入本地体验后恢复 100% | 通过；新内容换行正常，输入框和按钮可滚动到达，登录成功；冷启动清空登录表单，未恢复联机会话；本地联系人、消息与“小林同学”资料仍在。验后恢复标准字号 | [设置大字号](screenshots/f6-settings-font.png)、[登录页顶部](screenshots/f6-login-font-top.png)、[登录操作区](screenshots/f6-login-font-bottom.png)、[大字号登录成功](screenshots/f6-online-font.png)、[冷启动](screenshots/f6-cold-start.png) |
 
 构建详细输出保存在本机忽略目录 `.local/`。每项仅进行必要构建和相关功能操作；未运行与改动无关的压力测试或测试模板。
 
 F1 的必要修正：Search 使用当前 SDK 支持的 `textFont`；静态存储方法使用类名访问；表情按钮清除默认内边距以避免图案裁切。只读审查发现初始化失败可能覆盖旧数据，已增加写入保护；该故障保护经过代码审查，未伪称做过破坏数据的设备测试。
+
+F6 使用虚构课程手机号，验证码输入控件遮蔽显示，辅助工具也隐藏验证码日志。业务仅连接本机 word-api；没有调用真实短信或微信服务。实际响应中 login 的 HTTP 状态为 201、业务 code 为 200，info 为 HTTP 200、业务 code 为 200。未逐一模拟验证码过期、服务端畸形数据、10 秒超时或所有业务错误码；这些分支仅做实现及只读审查。构建仍有原工程图标基础资源、可能抛异常调用及未配置签名提示，构建成功与设备安装运行分别以上述证据为准。

@@ -11,9 +11,6 @@
     {
       "name": "EntryAbility_label",
       "value": "武汉职院"
-    },
-    { "name":  "reason",
-      "value":  "应用需要申请相机权限"
     }
   ]
 }

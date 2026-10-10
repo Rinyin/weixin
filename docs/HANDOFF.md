@@ -19,7 +19,7 @@
 
 ## 接续点（2026-10-10）
 
-按用户要求，在 **F5 已完成并验证的检查点暂停**，准备新建对话。下次从 F6 登录开始；不要重复 F0–F5 已通过的无关测试。
+本轮已从 F5 检查点继续，**F6 已完成并通过必要构建和现有模拟器验证**；下一项 F7 为最终交付。不要重复 F0–F6 已通过的无关测试。
 
 F0–F2 已验证。F2 本轮补验：再次添加“小陈 / course_friend_01”，页面显示“该微信号已在通讯录中，请勿重复添加”；证据 `docs/screenshots/f2-duplicate-contact.png`。不重复已通过的主流程测试。
 
@@ -29,9 +29,9 @@ F4 已完成：`VideoChannel`、`VideoData` 和发现/我入口；三个 MP4 均
 
 F5 已完成：`ProfileService`、`EditProfile`、`Settings`、`FontSettings`；资料及字号持久化、空昵称校验、资料跨页同步通过。140% 字号下四 Tabs、联系人详情、聊天/弹窗及键盘、朋友圈、视频布局检查通过；重启资料和字号保留。截图 `f5-*`，构建 `.local/build-F5.log`。已恢复标准字号；本机课程资料为“小林同学 / 湖北 · 武汉 / 认真学习，记录生活。”及 avatar2。`device.py replace-text-id` 可替换已有字段；原 `text-id` 会追加文本。
 
-下一项 F6 尚未实现，Axios 依赖未安装，工作区没有未完成的登录代码。先安装固定版本 `@ohos/axios: 2.2.15`，再实现登录页、API 服务和明确的本地体验入口；随后 F7 交付可安装 HAP。`EntryAbility` 当前直接进入 Index，需在 F6 接入登录入口；`module.json5` 的 INTERNET 权限 usedScene 仍写为 Index，应改为 EntryAbility 或简化为权限 name。
+F6 已完成：Axios 2.2.15、`AuthModels`、`AuthService`、`SessionStore`、`Login`；入口改为登录页，Index 显示会话模式，设置显示独立联机资料并可退出；INTERNET 权限已简化。真实取码、倒计时、错误码拒绝、login/info、连接失败、请求中退出到本地、140% 字号及联机状态冷启动均通过，截图 `f6-*`。契约见 `docs/AUTH_API.md`，详细证据见测试报告。token 不持久化，验证码控件与工具输出均遮蔽。Axios MIT 许可已放入 rawfile 随 HAP 打包。
 
-当前可安装产物为 F5 构建：`entry/build/default/outputs/default/entry-default-unsigned.hap`，已在现有模拟器安装通过。构建/安装输出为 `.local/build-F5.log`、`.local/install-F5.log`。本轮提交：F2 补验 `6a83e55`、F3 `4781846`、F4 `7b4b23e`、F5 `5fbf752`；验收详情见 [实际验证记录](TEST_REPORT.md)。
+当前可安装产物为 F6 构建：`entry/build/default/outputs/default/entry-default-unsigned.hap`，已在现有模拟器安装通过。构建/安装输出为 `.local/build-F6.log`、`.local/install-F6.log`。F7 应复用这个已验证二进制，整理产物与校验信息，不因仅改文档重复构建。历史提交：F2 补验 `6a83e55`、F3 `4781846`、F4 `7b4b23e`、F5 `5fbf752`；后续提交以 Git 历史为准，验收详情见 [实际验证记录](TEST_REPORT.md)。
 
 先运行 `git status --short --branch`，检查是否有用户在上一轮之后新增的修改。工作区代码优先于本段描述；功能最新完成情况以 [PROGRESS.md](PROGRESS.md) 和 Git 历史为准。
 
@@ -42,8 +42,8 @@ F5 已完成：`ProfileService`、`EditProfile`、`Settings`、`FontSettings`；
 - HDC：`C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/toolchains/hdc.exe`；2026-10-10 当前目标 `127.0.0.1:5557`。先 `list targets` 检查新会话时是否仍在线。
 - `hdc install -r entry/build/default/outputs/default/entry-default-unsigned.hap` 在当前模拟器已成功，不必为它额外配置签名。
 - `python tools/device.py launch|snapshot|tap x y|text x y 文本|back|stop` 控制真实模拟器并输出布局；支持 `click-id`、`click-text`、`replace-text-id`，`--shot 名称` 保存实际截图到 `docs/screenshots/`。冷启动后需等页面稳定再查节点；不要把短暂的桌面布局当作应用崩溃。
-- 本轮缺少 computer-use 的 `node_repl` 入口，不是应用失败；通过 DevEco 配套 Hvigor + HDC 实际编译/安装/交互。如果新对话拥有原生窗口工具，可直接使用已运行窗口。
-- 2026-10-10 已确认 DevEco、模拟器及本机 Swagger 在线，已建立 `hdc rport tcp:3000 tcp:3000`；下次检查转发是否仍有效，F6 尚须在应用中验证。避免重启无关服务。
+- 已通过 DevEco 配套 Hvigor + HDC 实际编译/安装/交互，无需依赖浏览器或原生窗口工具。
+- 2026-10-10 已确认 DevEco、模拟器及本机 Swagger 在线，`hdc fport ls` 可检查 `tcp:3000 tcp:3000 [Reverse]`。F6 已实际登录；故障验证只调整本应用转发，现已恢复，临时延迟代理已关闭。避免重启无关服务。
 
 ## 后端契约与实现提醒
 
