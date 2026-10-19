@@ -13,12 +13,12 @@
 | F6 | 手机号验证码登录（Axios） | 已完成 | 构建/安装、真实取码/倒计时、错误码拒绝、login/info、联机资料与退出、断网不误登录、延迟响应取消、大字号和冷启动均通过；截图 `f6-*` |
 | F7 | 最终验收与应用产物 | 已完成 | [v1.0.0](https://github.com/Rinyin/weixin/releases/tag/v1.0.0) 已发布源码标签、同一已验证 HAP 及许可/校验附件；ZIP 完整性、远端 6 个附件大小和 SHA-256 均通过；见 [交付说明](DELIVERY.md) |
 | F8 | 用户补充：图标、名称及启动页 | 已完成 | 提供的 PNG 已用于应用、入口和启动窗口图标；名称统一为“微信”；构建、覆盖安装、桌面和系统启动画面、进入登录页通过；[v1.0.1](https://github.com/Rinyin/weixin/releases/tag/v1.0.1) 已发布，远端 6 个附件的大小/摘要与本地一致，截图 `f8-*` |
-| F9 | 联机启动转发辅助 | 已完成 | `tools/online.sh` 自动检查 word-api、选择在线 HDC 目标、建立/复用 `tcp:3000` 反向转发并启动应用；一次真实模拟器取码验证通过 |
+| F9 | 联机启动转发辅助 | 已完成 | `tools/online.sh`（Git Bash）和 `tools/online.ps1`（Windows PowerShell）自动检查 word-api、选择在线 HDC 目标、建立/复用 `tcp:3000` 反向转发并启动应用；真实模拟器取码验证通过 |
 
 ## 当前接续点
 
 1. F0–F9 已完成并记录，无需重复已通过的无关测试。
-2. 当前没有未完成功能或外部阻塞；联机验收使用 `bash tools/online.sh` 自动准备转发，后续按新增需求推进，或在相关改动后做必要验证。
+2. 当前没有未完成功能或外部阻塞；联机验收可使用 Git Bash 的 `bash tools/online.sh` 或 PowerShell 的 `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\online.ps1` 自动准备转发，后续按新增需求推进，或在相关改动后做必要验证。
 3. 公开仓库 https://github.com/Rinyin/weixin 。功能提交：F2 补验 `6a83e55`、F3 `4781846`、F4 `7b4b23e`、F5 `5fbf752`、F6 `515be15`、F8 `7ec73b6`。
 4. 模拟器可安装本项目 unsigned HAP；此结论只适用于当前模拟器，不代表真机免签。
 

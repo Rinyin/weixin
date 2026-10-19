@@ -37,7 +37,7 @@ F7 已完成：[v1.0.0 Release](https://github.com/Rinyin/weixin/releases/tag/v1
 
 F8 已完成：AppScope、entry 的新 `app_icon.png` 与用户图片逐字节相同；应用/入口/启动窗口三个图标引用一致，AppScope 和默认/zh_CN/en_US 的名称均为“微信”。实际桌面裁剪截图 `f8-launcher-icon-name.png`、系统启动画面 `f8-start-window.jpeg`、启动后登录页 `f8-launch-login.png`。日志 `.local/build-F8.log`、`.local/install-F8.log`；当前包 50,029,903 字节，SHA-256 `caad2ec7d926f767302615738d7500920e871e7604f445dc45c2af9b5f956d8b`，66 个 ZIP 条目完整性通过。[v1.0.1 Release](https://github.com/Rinyin/weixin/releases/tag/v1.0.1) 的 6 个附件大小和摘要均与本地一致，源码标签为 `7ec73b6`；交付副本在 `artifacts/v1.0.1/`，核对记录为 `.local/release-verification-v1.0.1.json`。模拟器停在标准字号登录页，原 3000 反向转发保留。
 
-F9 已完成：新增 `tools/online.sh` 作为联机验收入口。脚本检查主机 `word-api`、自动选择在线 HDC 目标、幂等建立 `tcp:3000` 反向转发，并启动已安装的 `com.example.weixin`；`--prepare-only` 只准备转发。一次真实模拟器取码验证通过；本次仅更新开发工具和文档，不改应用源码或 HAP，不发布新版本。
+F9 已完成：提供 `tools/online.sh`（Git Bash）和 `tools/online.ps1`（Windows PowerShell）两种联机验收入口。两者都会检查主机 `word-api`、自动选择在线 HDC 目标、幂等建立 `tcp:3000` 反向转发，并启动已安装的 `com.example.weixin`；分别使用 `--prepare-only` 和 `-PrepareOnly` 只准备转发。Git Bash 流程已真实取码；PowerShell 流程已验证服务检查、转发复用和应用启动。本次仅更新开发工具和文档，不改应用源码或 HAP，不发布新版本。
 
 先运行 `git status --short --branch`，检查是否有用户在上一轮之后新增的修改。工作区代码优先于本段描述；功能最新完成情况以 [PROGRESS.md](PROGRESS.md) 和 Git 历史为准。
 

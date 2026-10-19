@@ -30,7 +30,21 @@ hdc_bin="$deveco_root/sdk/default/openharmony/toolchains/hdc.exe"
 "$hdc_bin" shell aa start -a EntryAbility -b com.example.weixin
 ```
 
-安装已下载的 HAP 时，将 `install -r` 后的路径换成下载文件路径。联机验收可运行 `bash tools/online.sh`，它会检查本机课程服务、选择唯一在线模拟器、幂等建立反向转发并启动应用；使用 `bash tools/online.sh --prepare-only` 可只准备转发后再从 DevEco Studio 运行。多个设备在线时设置 `HDC_TARGET=<目标设备>`。`python tools/device.py` 为手动验收辅助工具，支持启动、点击、输入、返回和保存实际模拟器截图。
+安装已下载的 HAP 时，将 `install -r` 后的路径换成下载文件路径。联机验收可运行下面任一入口，它们都会检查本机课程服务、选择唯一在线模拟器、幂等建立反向转发并启动应用：
+
+```bash
+# Git Bash
+bash tools/online.sh
+# 只准备转发：bash tools/online.sh --prepare-only
+```
+
+```powershell
+# Windows PowerShell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\online.ps1
+# 只准备转发：powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\online.ps1 -PrepareOnly
+```
+
+多个设备在线时，Git Bash 设置 `HDC_TARGET=<目标设备>`，PowerShell 设置 `$env:HDC_TARGET='<目标设备>'`。`python tools/device.py` 为手动验收辅助工具，支持启动、点击、输入、返回和保存实际模拟器截图。
 
 ## 联机与本地体验
 
@@ -42,7 +56,13 @@ hdc_bin="$deveco_root/sdk/default/openharmony/toolchains/hdc.exe"
 bash tools/online.sh
 ```
 
-脚本会自动复用已有的 `[Reverse] tcp:3000 tcp:3000` 转发；模拟器或 HDC 重启后再次执行即可恢复。登录页输入虚构课程号码（例如 `10000000001`），点击获取验证码、填入课程验证码，再登录；设置页可查看独立的联机资料或退出。联机会话不持久化，冷启动重新选择登录或本地体验；原有课程数据会保留。
+Windows PowerShell 可使用：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\online.ps1
+```
+
+脚本会自动复用已有的 `[Reverse] tcp:3000 tcp:3000` 转发；模拟器或 HDC 重启后再次执行任一入口即可恢复。登录页输入虚构课程号码（例如 `10000000001`），点击获取验证码、填入课程验证码，再登录；设置页可查看独立的联机资料或退出。联机会话不持久化，冷启动重新选择登录或本地体验；原有课程数据会保留。
 
 ## 许可证与素材
 
