@@ -17,7 +17,7 @@
 - 本机已启动 `word-api`，已通过在线 Swagger 核对契约；使用本机服务地址。
 - 一次推进一项功能：实现、必要构建、现有模拟器验证、更新记录、独立提交。
 
-## 接续点（2026-10-10）
+## 接续点（2026-10-19）
 
 本轮已从 F5 检查点继续，**F0–F8 全部完成**。F6 `515be15`，F7 交付文档 `4f92c60`；用户补充的 F8 图标、名称和系统启动页修改已在 `7ec73b6` 实现、构建并实际验证，**最新 v1.0.1 已公开交付并完成远端核对**。当前没有未完成功能或外部阻塞，不要重复已通过的无关测试。
 
@@ -37,17 +37,19 @@ F7 已完成：[v1.0.0 Release](https://github.com/Rinyin/weixin/releases/tag/v1
 
 F8 已完成：AppScope、entry 的新 `app_icon.png` 与用户图片逐字节相同；应用/入口/启动窗口三个图标引用一致，AppScope 和默认/zh_CN/en_US 的名称均为“微信”。实际桌面裁剪截图 `f8-launcher-icon-name.png`、系统启动画面 `f8-start-window.jpeg`、启动后登录页 `f8-launch-login.png`。日志 `.local/build-F8.log`、`.local/install-F8.log`；当前包 50,029,903 字节，SHA-256 `caad2ec7d926f767302615738d7500920e871e7604f445dc45c2af9b5f956d8b`，66 个 ZIP 条目完整性通过。[v1.0.1 Release](https://github.com/Rinyin/weixin/releases/tag/v1.0.1) 的 6 个附件大小和摘要均与本地一致，源码标签为 `7ec73b6`；交付副本在 `artifacts/v1.0.1/`，核对记录为 `.local/release-verification-v1.0.1.json`。模拟器停在标准字号登录页，原 3000 反向转发保留。
 
+F9 已完成：新增 `tools/online.sh` 作为联机验收入口。脚本检查主机 `word-api`、自动选择在线 HDC 目标、幂等建立 `tcp:3000` 反向转发，并启动已安装的 `com.example.weixin`；`--prepare-only` 只准备转发。一次真实模拟器取码验证通过；本次仅更新开发工具和文档，不改应用源码或 HAP，不发布新版本。
+
 先运行 `git status --short --branch`，检查是否有用户在上一轮之后新增的修改。工作区代码优先于本段描述；功能最新完成情况以 [PROGRESS.md](PROGRESS.md) 和 Git 历史为准。
 
 ## 已确认的运行通道
 
 - DevEco 已打开本工程，安装目录为 `C:/Program Files/Huawei/DevEco Studio`；同目录 SDK、Node、Hvigor 可用。
 - Git Bash：`bash tools/build.sh > .local/build-F6.log 2>&1`。构建通常 8–15 秒，不需重装环境。
-- HDC：`C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/toolchains/hdc.exe`；2026-10-10 当前目标 `127.0.0.1:5557`。先 `list targets` 检查新会话时是否仍在线。
+- HDC：`C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/toolchains/hdc.exe`；联机启动脚本会自动检测目标。2026-10-19 实际目标为 `127.0.0.1:5555`；多设备时用 `HDC_TARGET` 明确指定。
 - `hdc install -r entry/build/default/outputs/default/entry-default-unsigned.hap` 在当前模拟器已成功，不必为它额外配置签名。
 - `python tools/device.py launch|snapshot|tap x y|text x y 文本|back|stop` 控制真实模拟器并输出布局；支持 `click-id`、`click-text`、`replace-text-id`，`--shot 名称` 保存实际截图到 `docs/screenshots/`。冷启动后需等页面稳定再查节点；不要把短暂的桌面布局当作应用崩溃。
 - 已通过 DevEco 配套 Hvigor + HDC 实际编译/安装/交互，无需依赖浏览器或原生窗口工具。
-- 2026-10-10 已确认 DevEco、模拟器及本机 Swagger 在线，`hdc fport ls` 可检查 `tcp:3000 tcp:3000 [Reverse]`。F6 已实际登录；故障验证只调整本应用转发，现已恢复，临时延迟代理已关闭。避免重启无关服务。
+- `bash tools/online.sh` 检查本机 word-api 并建立或复用 `tcp:3000` 反向转发；2026-10-19 已在当前模拟器成功取码。F6 曾实际完成登录；临时延迟代理已关闭。避免重启无关服务。
 
 ## 后端契约与实现提醒
 

@@ -30,20 +30,19 @@ hdc_bin="$deveco_root/sdk/default/openharmony/toolchains/hdc.exe"
 "$hdc_bin" shell aa start -a EntryAbility -b com.example.weixin
 ```
 
-安装已下载的 HAP 时，将 `install -r` 后的路径换成下载文件路径。多个设备在线时，HDC 命令需加 `-t <目标设备>`。`python tools/device.py` 为手动验收辅助工具，支持启动、点击、输入、返回和保存实际模拟器截图。
+安装已下载的 HAP 时，将 `install -r` 后的路径换成下载文件路径。联机验收可运行 `bash tools/online.sh`，它会检查本机课程服务、选择唯一在线模拟器、幂等建立反向转发并启动应用；使用 `bash tools/online.sh --prepare-only` 可只准备转发后再从 DevEco Studio 运行。多个设备在线时设置 `HDC_TARGET=<目标设备>`。`python tools/device.py` 为手动验收辅助工具，支持启动、点击、输入、返回和保存实际模拟器截图。
 
 ## 联机与本地体验
 
 验证码登录使用本机 `word-api`，直接返回验证码，不发送短信；仅登录及联机账号资料联网。聊天、社交和个人资料属于本地教学演示；连接失败不会自动登录。接口、配置与会话行为见 [课程登录接口](docs/AUTH_API.md)。
 
-本地体验不依赖后端。联机验收需另行运行课程提供的 `word-api`（服务源码不在本仓库），确保主机 `http://127.0.0.1:3000/doc/swagger-api` 可访问，再执行：
+本地体验不依赖后端。联机验收需另行运行课程提供的 `word-api`（服务源码不在本仓库），确保主机 `http://127.0.0.1:3000/doc/swagger-api` 可访问，然后执行：
 
 ```bash
-"$hdc_bin" rport tcp:3000 tcp:3000
-"$hdc_bin" fport ls
+bash tools/online.sh
 ```
 
-如果已存在相同 `[Reverse]` 转发，无需重复创建。登录页输入虚构课程号码（例如 `10000000001`），点击获取验证码、填入课程验证码，再登录；设置页可查看独立的联机资料或退出。联机会话不持久化，冷启动重新选择登录或本地体验；原有课程数据会保留。
+脚本会自动复用已有的 `[Reverse] tcp:3000 tcp:3000` 转发；模拟器或 HDC 重启后再次执行即可恢复。登录页输入虚构课程号码（例如 `10000000001`），点击获取验证码、填入课程验证码，再登录；设置页可查看独立的联机资料或退出。联机会话不持久化，冷启动重新选择登录或本地体验；原有课程数据会保留。
 
 ## 许可证与素材
 
