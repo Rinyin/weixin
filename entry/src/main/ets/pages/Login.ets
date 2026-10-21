@@ -1,5 +1,5 @@
 import { AbortController } from '@ohos/axios';
-import { BACKGROUND, GREEN, TEXT_PRIMARY, TEXT_SECONDARY } from '../common/Theme';
+import { GREEN, LINK_COLOR, TEXT_PRIMARY } from '../common/Theme';
 import { OnlineProfile } from '../model/AuthModels';
 import { AuthFailure, AuthService } from '../services/AuthService';
 import { SessionStore } from '../services/SessionStore';
@@ -11,7 +11,6 @@ struct Login {
   @StorageLink('storeError') storeError: string = '';
   @State phone: string = '';
   @State code: string = '';
-  @State deliveredCode: string = '';
   @State error: string = '';
   @State busy: boolean = false;
   @State signingIn: boolean = false;
@@ -32,7 +31,6 @@ struct Login {
   onPageHide(): void { this.stopWork(); }
   aboutToDisappear(): void {
     this.stopWork();
-    this.deliveredCode = '';
     this.code = '';
   }
 
@@ -68,7 +66,6 @@ struct Login {
     if (!AuthService.validPhone(this.phone)) { this.error = '手机号应为 1 开头的 11 位数字'; return; }
     this.busy = true;
     this.error = '';
-    this.deliveredCode = '';
     this.code = '';
     const phone = this.phone.trim();
     const controller = new AbortController();
@@ -77,7 +74,9 @@ struct Login {
     try {
       const code = await AuthService.requestCode(phone, controller);
       if (!this.isCurrent(id)) { return; }
-      this.deliveredCode = code;
+      // 服务端直接返回验证码，模拟系统短信验证码自动填充。
+      this.code = code;
+      this.getUIContext().getPromptAction().showToast({ message: '验证码已发送' });
       this.issuedPhone = phone;
       this.cooldownUntil = Date.now() + 60000;
       this.resumeCountdown();
@@ -116,7 +115,6 @@ struct Login {
     if (this.navigating) { return; }
     this.navigating = true;
     this.stopWork();
-    this.deliveredCode = '';
     this.code = '';
     if (profile) { SessionStore.enterOnline(profile); } else { SessionStore.enterLocal(); }
     try {
@@ -132,54 +130,89 @@ struct Login {
     }
   }
 
+  @Builder
+  fieldRow(label: string) {
+    Text(label).fontSize(17 * this.fontScale).fontColor(TEXT_PRIMARY).width(96 * this.fontScale)
+  }
+
+  @Builder
+  lineDivider() {
+    Divider().strokeWidth(0.5).color('#E5E5E5')
+  }
+
+  private canSubmit(): boolean {
+    return !this.busy && this.phone.length > 0 && this.code.length > 0;
+  }
+
   build() {
-    Scroll() {
-      Column({ space: 18 }) {
-        Image($r('app.media.weixin')).width(64).height(64).fillColor(GREEN).margin({ top: 28, bottom: 8 })
-        Text('鸿蒙微信 · 课程作业').fontSize(26 * this.fontScale).fontWeight(FontWeight.Bold)
-          .fontColor(TEXT_PRIMARY).textAlign(TextAlign.Center).width('100%')
-        Text('登录本机课程服务').fontSize(18 * this.fontScale).fontColor(TEXT_PRIMARY)
-        Text('验证码由课程服务直接返回，不发送短信。聊天、联系人和朋友圈使用本地教学数据。')
-          .fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY).width('100%').lineHeight(22 * this.fontScale)
-        Text('手机号').fontSize(16 * this.fontScale).alignSelf(ItemAlign.Start)
-        TextInput({ text: this.phone, placeholder: '输入 11 位课程手机号' }).id('login-phone')
-          .type(InputType.PhoneNumber).maxLength(11).height(50 * this.fontScale).fontSize(17 * this.fontScale)
-          .enabled(!this.busy).onChange((value: string) => {
-            this.phone = value.trim();
-            this.error = '';
-            if (this.phone !== this.issuedPhone) { this.deliveredCode = ''; this.code = ''; }
+    Column() {
+      Scroll() {
+        Column() {
+          Text('手机号登录').fontSize(26 * this.fontScale).fontWeight(FontWeight.Medium).fontColor(TEXT_PRIMARY)
+            .width('100%').margin({ top: 72, bottom: 40 })
+          Row() {
+            this.fieldRow('国家/地区')
+            Text('中国大陆（+86）').fontSize(17 * this.fontScale).fontColor(TEXT_PRIMARY).layoutWeight(1)
+          }.width('100%').constraintSize({ minHeight: 56 })
+          this.lineDivider()
+          Row() {
+            this.fieldRow('手机号')
+            TextInput({ text: this.phone, placeholder: '请填写手机号' })
+              .type(InputType.PhoneNumber).maxLength(11).layoutWeight(1).height(56)
+              .fontSize(17 * this.fontScale).placeholderFont({ size: 17 * this.fontScale })
+              .backgroundColor(Color.Transparent).padding(0).borderRadius(0).caretColor(GREEN)
+              .enabled(!this.busy).onChange((value: string) => {
+                this.phone = value.trim();
+                this.error = '';
+                if (this.phone !== this.issuedPhone) { this.code = ''; }
+              })
+          }.width('100%').constraintSize({ minHeight: 56 })
+          this.lineDivider()
+          Row() {
+            this.fieldRow('验证码')
+            TextInput({ text: this.code, placeholder: '请填写验证码' })
+              .type(InputType.Number).maxLength(8).layoutWeight(1).height(56)
+              .fontSize(17 * this.fontScale).placeholderFont({ size: 17 * this.fontScale })
+              .backgroundColor(Color.Transparent).padding(0).borderRadius(0).caretColor(GREEN)
+              .enabled(!this.busy).onChange((value: string) => { this.code = value.trim(); this.error = ''; })
+            Text(this.countdown > 0 ? this.countdown + '秒后重发' : (this.busy && !this.signingIn ? '获取中…' : '获取验证码'))
+              .fontSize(15 * this.fontScale)
+              .fontColor(this.busy || this.countdown > 0 ? '#B2B2B2' : LINK_COLOR)
+              .padding({ left: 12, top: 8, bottom: 8 })
+              .accessibilityText('获取验证码')
+              .onClick(() => { this.requestCode(); })
+          }.width('100%').constraintSize({ minHeight: 56 })
+          this.lineDivider()
+          if (this.error) {
+            Text(this.error).fontSize(14 * this.fontScale).fontColor('#FA5151').width('100%').margin({ top: 12 })
+          }
+          if (this.storeError) {
+            Text(this.storeError).fontSize(14 * this.fontScale).fontColor('#FA5151').width('100%').margin({ top: 12 })
+          }
+          Button(this.signingIn ? '正在登录…' : '同意并继续', { type: ButtonType.Normal })
+            .width(184).height(48).borderRadius(8).margin({ top: 72 })
+            .fontSize(17 * this.fontScale).fontWeight(FontWeight.Medium)
+            .fontColor(this.canSubmit() ? Color.White : '#B2B2B2')
+            .backgroundColor(this.canSubmit() ? GREEN : '#E1E1E1')
+            .enabled(this.canSubmit()).onClick(() => { this.signIn(); })
+          Text() {
+            Span('登录即表示同意')
+            Span('《软件许可及服务协议》').fontColor(LINK_COLOR)
+            Span('和')
+            Span('《隐私保护指引》').fontColor(LINK_COLOR)
+          }.fontSize(13 * this.fontScale).fontColor('#B2B2B2').textAlign(TextAlign.Center)
+          .width('100%').margin({ top: 16 })
+        }.padding({ left: 32, right: 32, bottom: 24 }).width('100%')
+      }.align(Alignment.TopStart).layoutWeight(1).width('100%').scrollBar(BarState.Off)
+      Row() {
+        Text('找回密码').fontSize(14 * this.fontScale).fontColor(LINK_COLOR)
+          .onClick(() => {
+            this.getUIContext().getPromptAction().showToast({ message: '请使用验证码登录' });
           })
-        Button(this.countdown > 0 ? this.countdown + ' 秒后重新获取' : (this.busy && !this.signingIn ? '正在获取…' : '获取验证码'))
-          .id('login-get-code').width('100%').height(48 * this.fontScale).fontSize(16 * this.fontScale)
-          .fontColor(GREEN).backgroundColor('#E0F2E7').enabled(!this.busy && this.countdown === 0)
-          .onClick(() => { this.requestCode(); })
-        Text('验证码').fontSize(16 * this.fontScale).alignSelf(ItemAlign.Start)
-        TextInput({ text: this.code, placeholder: '输入 4–8 位验证码' }).id('login-code')
-          .type(InputType.NUMBER_PASSWORD).showPasswordIcon(false).maxLength(8)
-          .height(50 * this.fontScale).fontSize(17 * this.fontScale).enabled(!this.busy)
-          .onChange((value: string) => { this.code = value.trim(); this.error = ''; })
-        if (this.deliveredCode) {
-          Text('已取得课程验证码，有效期 10 分钟。可点击下方按钮填入。')
-            .fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY).width('100%')
-          Button('填入课程验证码').id('login-fill-code').fontSize(15 * this.fontScale)
-            .width('100%').height(44 * this.fontScale).backgroundColor(Color.White).fontColor(GREEN)
-            .enabled(!this.busy).onClick(() => { this.code = this.deliveredCode; this.error = ''; })
-        }
-        if (this.error) {
-          Text(this.error).id('login-error').fontSize(14 * this.fontScale).fontColor('#B64236').width('100%')
-        }
-        if (this.storeError) {
-          Text(this.storeError).fontSize(14 * this.fontScale).fontColor('#B64236').width('100%')
-        }
-        Button(this.signingIn ? '正在登录…' : '登录课程服务').id('login-submit')
-          .width('100%').height(50 * this.fontScale).fontSize(18 * this.fontScale).backgroundColor(GREEN)
-          .enabled(!this.busy).onClick(() => { this.signIn(); })
-        Button('进入本地体验').id('login-local').width('100%').height(48 * this.fontScale)
-          .fontSize(17 * this.fontScale).fontColor(TEXT_PRIMARY).backgroundColor(Color.White)
-          .onClick(() => { this.enterApp(); })
-        Text('本地体验无需登录；联机登录仅在本次运行有效。').fontSize(13 * this.fontScale)
-          .fontColor(TEXT_SECONDARY).textAlign(TextAlign.Center).width('100%')
-      }.padding({ left: 24, right: 24, top: 16, bottom: 32 }).width('100%')
-    }.id('login-scroll').align(Alignment.TopStart).height('100%').width('100%').backgroundColor(BACKGROUND)
+        Divider().vertical(true).height(12).color('#D8D8D8').margin({ left: 14, right: 14 })
+        Text('更多选项').fontSize(14 * this.fontScale).fontColor(LINK_COLOR)
+          .bindMenu([{ value: '游客模式（暂不登录）', action: () => { this.enterApp(); } }])
+      }.justifyContent(FlexAlign.Center).width('100%').padding({ top: 12, bottom: 28 })
+    }.height('100%').width('100%').backgroundColor(Color.White)
   }
 }

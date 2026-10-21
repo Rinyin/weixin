@@ -4,6 +4,11 @@ import { preferences } from '@kit.ArkData';
 import { AppData, Contact } from '../model/Models';
 import { seedData, seedMoments } from '../model/SeedData';
 
+export interface SettingEntry {
+  key: string;
+  value: string;
+}
+
 // 记录使用沙箱 JSON 原子替换；小型设置使用 Preferences，避免大 JSON 超过其单值限制。
 export class AppStore {
   static data: AppData = seedData();
@@ -80,6 +85,28 @@ export class AppStore {
 
   static id(prefix: string): string {
     return prefix + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+  }
+
+  static readSetting(key: string, fallback: string): string {
+    if (!AppStore.settings) { return fallback; }
+    const value = AppStore.settings.getSync(key, fallback);
+    return typeof value === 'string' ? value : fallback;
+  }
+
+  /** 串行写入若干字符串设置（如登录状态）。 */
+  static async saveSettings(entries: SettingEntry[]): Promise<void> {
+    if (!AppStore.settings) {
+      throw new Error('本地设置尚不可写入');
+    }
+    const settings = AppStore.settings;
+    const current = AppStore.writeQueue.then(async () => {
+      entries.forEach((entry: SettingEntry) => { settings.putSync(entry.key, entry.value); });
+      await settings.flush();
+    });
+    AppStore.writeQueue = current.catch(() => {
+      AppStorage.setOrCreate('storeError', '设置保存失败，请检查设备存储后重试。');
+    });
+    return current;
   }
 
   static async setFontScale(scale: number): Promise<void> {

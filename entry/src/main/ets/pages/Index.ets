@@ -2,7 +2,7 @@ import { CompassList } from '../components/CompassList';
 import { ContackList } from '../components/ContackList';
 import { Profile } from '../components/Profile';
 import { WeixinContainer } from '../components/WeixinContainer';
-import { BACKGROUND, GREEN } from '../common/Theme';
+import { BACKGROUND, BAR_BACKGROUND, GREEN } from '../common/Theme';
 import { SessionMode } from '../model/AuthModels';
 import { SessionStore } from '../services/SessionStore';
 
@@ -28,15 +28,12 @@ struct Index {
   @Builder
   createTabBar(ImgR: Resource, title: string, index: number) {
     Column({ space: 3 }) {
-      Image(ImgR).width(25).height(25).fillColor(this.currentIndex === index ? GREEN : '#555555')
-      Text(title).fontSize(11 * this.fontScale).fontColor(this.currentIndex === index ? GREEN : '#555555')
+      Image(ImgR).width(26).height(26).fillColor(this.currentIndex === index ? GREEN : '#191919')
+      Text(title).fontSize(11 * this.fontScale).fontColor(this.currentIndex === index ? GREEN : '#191919')
     }.width('100%').height('100%').justifyContent(FlexAlign.Center)
   }
   build() {
     Column() {
-      Text(this.sessionMode === SessionMode.Online ? '课程服务已登录 · 社交数据为本地教学数据' : '本地体验 · 未登录课程服务')
-        .id('session-status').fontSize(12 * this.fontScale).fontColor('#576B75')
-        .padding(8).width('100%').backgroundColor('#E5F0EA')
       if (this.storeError) {
         Text(this.storeError).fontSize(13 * this.fontScale).fontColor('#B64236')
           .padding(10).width('100%').backgroundColor('#FFF0E9')
@@ -58,9 +55,9 @@ struct Index {
         Profile()
       }.tabBar(this.createTabBar($r('app.media.me'), '我', 3))
     }.onChange((index: number) => {this.currentIndex = index})
-    .backgroundColor(BACKGROUND)
-    .barWidth('100%').barHeight(58 * this.fontScale)
-    .divider({ strokeWidth: 0.5, color: '#D8D8D8' }).scrollable(false).layoutWeight(1)
+    .backgroundColor(BACKGROUND).barBackgroundColor(BAR_BACKGROUND)
+    .barWidth('100%').barHeight(56 * this.fontScale)
+    .divider({ strokeWidth: 0.5, color: '#E0E0E0' }).scrollable(false).layoutWeight(1)
     }.width('100%').height('100%').backgroundColor(BACKGROUND)
   }
 }

@@ -27,7 +27,7 @@ export class AuthService {
       case 203: return '验证码已过期，请重新获取';
       case 204: return '验证码错误，请检查后重试';
       case 205: return '请填写手机号';
-      default: return '课程服务暂时无法处理此请求，请稍后重试';
+      default: return '服务暂时无法处理此请求，请稍后重试';
     }
   }
 
@@ -42,23 +42,23 @@ export class AuthService {
         const failure: AxiosError<string, LoginRequest> = error as AxiosError<string, LoginRequest>;
         const code = String(failure.code || '');
         if (code === '2300028' || code === 'ETIMEDOUT' || code === 'ECONNABORTED') {
-          throw new AuthFailure('连接课程服务超时，请稍后重试');
+          throw new AuthFailure('网络连接超时，请稍后重试');
         }
         // 鸿蒙适配层的网络错误也可能带 response，必须确认它是 HTTP 状态。
         if (failure.response && typeof failure.response.status === 'number' &&
           failure.response.status >= 100 && failure.response.status <= 599) {
-          throw new AuthFailure('课程服务响应异常，请稍后重试');
+          throw new AuthFailure('服务器响应异常，请稍后重试');
         }
       }
-      throw new AuthFailure('无法连接课程服务，请检查服务和网络后重试，或选择本地体验');
+      throw new AuthFailure('网络不可用，请检查网络设置后重试');
     }
     const result = response.data;
     if (!result || typeof result.code !== 'number') {
-      throw new AuthFailure('课程服务返回的数据格式不正确');
+      throw new AuthFailure('服务器返回的数据格式不正确');
     }
     if (result.code !== 200) { throw new AuthFailure(AuthService.businessMessage(result.code)); }
     if (result.data === undefined || result.data === null) {
-      throw new AuthFailure('课程服务未返回所需数据');
+      throw new AuthFailure('服务器未返回所需数据');
     }
     return result.data;
   }
@@ -70,7 +70,7 @@ export class AuthService {
       url: '/word/user/code?phone=' + encodeURIComponent(value), method: 'GET', signal: controller.signal
     });
     if (typeof code !== 'string' || !AuthService.validCode(code)) {
-      throw new AuthFailure('课程服务返回的验证码格式不正确');
+      throw new AuthFailure('验证码格式不正确，请重新获取');
     }
     return code;
   }
@@ -85,7 +85,7 @@ export class AuthService {
       url: '/word/user/login', method: 'POST', headers: loginHeaders, data: form, signal: controller.signal
     });
     if (typeof token !== 'string' || !token.trim()) {
-      throw new AuthFailure('课程服务未返回有效的登录凭据');
+      throw new AuthFailure('登录失败，请重试');
     }
     // token 只用于本次 info 请求，不写磁盘或 AppStorage，不加入默认请求头。
     const infoHeaders = new AxiosHeaders();

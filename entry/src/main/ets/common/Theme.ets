@@ -1,8 +1,10 @@
-export const GREEN: string = '#07A854';
+export const GREEN: string = '#07C160';
 export const BACKGROUND: string = '#EDEDED';
 export const TEXT_PRIMARY: string = '#191919';
 export const TEXT_SECONDARY: string = '#777777';
 export const LINK_COLOR: string = '#576B95';
+export const BAR_BACKGROUND: string = '#F7F7F7';
+export const DIVIDER_COLOR: string = '#E5E5E5';
 
 export function avatarResource(name: string): Resource {
   switch (name) {
