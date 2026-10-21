@@ -39,6 +39,10 @@ F8 已完成：AppScope、entry 的新 `app_icon.png` 与用户图片逐字节�
 
 F9 已完成：提供 `tools/online.sh`（Git Bash）和 `tools/online.ps1`（Windows PowerShell）两种联机验收入口。两者都会检查主机 `word-api`、自动选择在线 HDC 目标、幂等建立 `tcp:3000` 反向转发，并启动已安装的 `com.example.weixin`；分别使用 `--prepare-only` 和 `-PrepareOnly` 只准备转发。Git Bash 流程已真实取码；PowerShell 流程已验证服务检查、转发复用和应用启动。本次仅更新开发工具和文档，不改应用源码或 HAP，不发布新版本。
 
+F10 已完成（2026-10-21）：按用户要求删除全部 `.id()` 测试标识和“课程服务 / 本地体验 / 教学数据”等界面提示；登录页改为微信“手机号登录”样式（取码后自动填入，“更多选项”提供游客模式）；主页去掉状态横幅，会话列表、通讯录、我、设置、聊天按微信样式调整（聊天页 ⋯ 进入联系人资料，时间按 5 分钟分隔，有内容显示“发送”否则 ⊕ 打开输入弹窗）。`SessionStore` 将登录模式、昵称、头像 URL 写入 Preferences（不存 token），`EntryAbility` 据此直接进入 Index，并设置 `KeyboardAvoidMode.RESIZE` 解决键盘顶出标题栏。证据见测试报告 F10。注意：`device.py click-id` 已无可用 id，改用 `tap` / `click-text`；`snapshot` 坐标为设备像素，与缩放后的截图坐标不同；布局含“‹”等字符时需设置 `PYTHONIOENCODING=utf-8`。新 HAP 尚未发布 Release；模拟器当前为联机已登录状态。
+
+F11 已完成（2026-10-21）：`Moments`、`PublishMoment`、`VideoChannel`、`VideoData`、`AddFriend`、`EditProfile` 及 `PageHeader`（新增 `primary` 绿色按钮）按微信样式重做；视频素材实为小羊肖恩与火烈鸟动画，标题/作者已据实修改。视频号喜欢状态仅保存在页面内存。F12 已按用户要求删除视频号右侧“上一条/下一条”按钮，仅保留“喜欢”；切换只靠上下滑动，上滑已用 `hdc shell uitest uiInput swipe 658 1800 658 700 2000` 实测通过。F13：顶部“关注 / 朋友 / 推荐”可点击切换（`VideoData.friendLikes` 为本地示例数据），作者旁可关注。F14：关注与喜欢写入 Preferences（`videoLiked` / `videoFollowed`），重启保留，证据见测试报告 F13、F14。证据见测试报告 F11。
+
 先运行 `git status --short --branch`，检查是否有用户在上一轮之后新增的修改。工作区代码优先于本段描述；功能最新完成情况以 [PROGRESS.md](PROGRESS.md) 和 Git 历史为准。
 
 ## 已确认的运行通道
