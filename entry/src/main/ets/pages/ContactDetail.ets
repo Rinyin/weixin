@@ -40,7 +40,7 @@ struct ContactDetail {
               Divider().color('#EEEEEE')
               this.detail('个性签名', this.contact.signature)
             }.width('100%')
-            Button('发消息', { type: ButtonType.Normal }).id('contact-message')
+            Button('发消息', { type: ButtonType.Normal })
               .fontSize(18 * this.fontScale).fontColor(GREEN).fontWeight(FontWeight.Medium)
               .width('100%').height(58 * this.fontScale).backgroundColor(Color.White)
               .onClick(() => this.getUIContext().getRouter().pushUrl({
