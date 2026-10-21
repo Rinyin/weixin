@@ -1,5 +1,4 @@
-import { PageHeader } from '../components/PageHeader';
-import { BACKGROUND, GREEN, momentImage, TEXT_SECONDARY } from '../common/Theme';
+import { GREEN, momentImage, TEXT_PRIMARY } from '../common/Theme';
 import { MomentsService } from '../services/MomentsService';
 
 @Entry
@@ -25,28 +24,43 @@ struct PublishMoment {
 
   build() {
     Column() {
-      PageHeader({ title: '发表朋友圈' })
+      Row() {
+        Text('取消').fontSize(16 * this.fontScale).fontColor(TEXT_PRIMARY).padding({ left: 16, right: 16 })
+          .height(56).onClick(() => { this.getUIContext().getRouter().back(); })
+        Blank()
+        Button(this.saving ? '发表中' : '发表', { type: ButtonType.Normal }).fontSize(15 * this.fontScale)
+          .height(32).padding({ left: 14, right: 14 }).borderRadius(4).margin({ right: 16 })
+          .backgroundColor(this.text.trim().length > 0 ? GREEN : '#E1E1E1')
+          .fontColor(this.text.trim().length > 0 ? Color.White : '#B2B2B2')
+          .enabled(!this.saving && this.text.trim().length > 0).onClick(() => { this.publish(); })
+      }.width('100%').height(56)
       Scroll() {
-        Column({ space: 20 }) {
-          TextArea({ text: this.text, placeholder: '这一刻的想法…' }).id('moment-draft')
-            .fontSize(18 * this.fontScale).height(190 * this.fontScale).maxLength(1000).backgroundColor(Color.White)
+        Column({ space: 16 }) {
+          TextArea({ text: this.text, placeholder: '这一刻的想法...' })
+            .fontSize(17 * this.fontScale).placeholderColor('#B2B2B2').constraintSize({ minHeight: 120 * this.fontScale })
+            .maxLength(1000).backgroundColor(Color.Transparent).padding(0).borderRadius(0).caretColor(GREEN)
             .onChange((value: string) => { this.text = value; })
-          Text('添加配图（可选，点击取消选择）').fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY)
-          Row({ space: 12 }) {
+          Row({ space: 6 }) {
             ForEach(this.images, (name: string) => {
-              Image(momentImage(name)).id('moment-image-' + name).width('29%').aspectRatio(1).objectFit(ImageFit.Cover)
-                .borderRadius(6).border({ width: this.image === name ? 3 : 0, color: GREEN })
-                .accessibilityText('选择课程配图 ' + name)
-                .onClick(() => { this.image = this.image === name ? '' : name; })
+              Stack({ alignContent: Alignment.TopEnd }) {
+                Image(momentImage(name)).width('100%').aspectRatio(1).objectFit(ImageFit.Cover)
+                  .opacity(this.image && this.image !== name ? 0.45 : 1)
+                Text(this.image === name ? '✓' : '').fontSize(14).fontColor(Color.White).width(22).height(22)
+                  .textAlign(TextAlign.Center).borderRadius(11).margin(4)
+                  .backgroundColor(this.image === name ? GREEN : '#66000000').border({ width: 1, color: Color.White })
+              }.width('31%').accessibilityText('选择配图 ' + name)
+              .onClick(() => { this.image = this.image === name ? '' : name; })
             }, (name: string) => name)
           }.width('100%')
-          Text('内容仅保存在本机，用于课程展示。').fontSize(13 * this.fontScale).fontColor(TEXT_SECONDARY)
-          if (this.error) { Text(this.error).fontSize(14 * this.fontScale).fontColor('#C33B32') }
-          Button(this.saving ? '正在发表…' : '发表').id('moment-publish').fontSize(17 * this.fontScale)
-            .width('100%').height(48 * this.fontScale).backgroundColor(GREEN)
-            .enabled(!this.saving && this.text.trim().length > 0).onClick(() => { this.publish(); })
-        }.padding(20).width('100%').alignItems(HorizontalAlign.Start)
+          Divider().strokeWidth(0.5).color('#E5E5E5').margin({ top: 24 })
+          Row() {
+            Text('谁可以看').fontSize(16 * this.fontScale).fontColor(TEXT_PRIMARY).layoutWeight(1)
+            Text('公开 ›').fontSize(15 * this.fontScale).fontColor('#B2B2B2')
+          }.width('100%').height(52)
+          Divider().strokeWidth(0.5).color('#E5E5E5')
+          if (this.error) { Text(this.error).fontSize(14 * this.fontScale).fontColor('#FA5151') }
+        }.padding({ left: 24, right: 24, top: 8, bottom: 24 }).width('100%').alignItems(HorizontalAlign.Start)
       }.align(Alignment.TopStart).layoutWeight(1).width('100%')
-    }.height('100%').width('100%').backgroundColor(BACKGROUND)
+    }.height('100%').width('100%').backgroundColor(Color.White)
   }
 }

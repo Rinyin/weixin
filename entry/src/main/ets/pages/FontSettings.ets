@@ -32,7 +32,7 @@ struct FontSettings {
       Scroll() {
         Column({ space: 24 }) {
           Text('当前字号：' + Math.round(this.fontScale * 100).toString() + '%')
-            .id('font-current').fontSize(17 * this.fontScale).fontWeight(FontWeight.Medium)
+            .fontSize(17 * this.fontScale).fontWeight(FontWeight.Medium)
           Column({ space: 14 }) {
             Text('预览文字').fontSize(21 * this.draftScale).fontWeight(FontWeight.Medium)
             Text('聊天、通讯录和页面文字一起变化。选择适合你的阅读大小。')
@@ -42,17 +42,17 @@ struct FontSettings {
           Text('预览比例 ' + Math.round(this.draftScale * 100).toString() + '%')
             .fontSize(15 * this.fontScale).fontColor(TEXT_SECONDARY)
           Slider({ value: this.draftScale, min: 0.85, max: 1.4, step: 0.05 })
-            .id('font-slider').width('100%').selectedColor(GREEN).showSteps(true).enabled(!this.saving)
+            .width('100%').selectedColor(GREEN).showSteps(true).enabled(!this.saving)
             .onChange((value: number) => { this.choose(value); })
           Row({ space: 10 }) {
-            Button('标准').id('font-default').layoutWeight(1).fontSize(15 * this.fontScale)
+            Button('标准').layoutWeight(1).fontSize(15 * this.fontScale)
               .backgroundColor(Color.White).fontColor('#333333').enabled(!this.saving).onClick(() => this.choose(1))
-            Button('大').id('font-large').layoutWeight(1).fontSize(15 * this.fontScale)
+            Button('大').layoutWeight(1).fontSize(15 * this.fontScale)
               .backgroundColor(Color.White).fontColor('#333333').enabled(!this.saving).onClick(() => this.choose(1.2))
-            Button('特大').id('font-largest').layoutWeight(1).fontSize(15 * this.fontScale)
+            Button('特大').layoutWeight(1).fontSize(15 * this.fontScale)
               .backgroundColor(Color.White).fontColor('#333333').enabled(!this.saving).onClick(() => this.choose(1.4))
           }.width('100%')
-          Button(this.saving ? '正在应用…' : '应用字体大小').id('font-apply').fontSize(17 * this.fontScale)
+          Button(this.saving ? '正在应用…' : '应用字体大小').fontSize(17 * this.fontScale)
             .width('100%').height(48 * this.fontScale).backgroundColor(GREEN).enabled(!this.saving)
             .onClick(() => { this.apply(); })
           if (this.saved) { Text('已应用，将在下次启动时保留。').fontSize(14 * this.fontScale).fontColor(GREEN) }

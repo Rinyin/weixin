@@ -18,7 +18,7 @@ export class MomentsService {
       .slice().sort((a: Moment, b: Moment) => b.createdAt - a.createdAt)
       .map((item: Moment): MomentView => {
         const contact = contacts.get(item.authorId);
-        const name = item.authorId === 'self' ? AppStore.data.profile.name : (contact?.name || '课程朋友');
+        const name = item.authorId === 'self' ? AppStore.data.profile.name : (contact?.name || '微信好友');
         const avatar = item.authorId === 'self' ? AppStore.data.profile.avatar : (contact?.avatar || 'avatar1');
         return { moment: item, name: name, avatar: avatar,
           key: item.id + '-' + item.liked.toString() + '-' + item.comments.length.toString() + '-' + name + '-' + avatar + '-' + AppStore.data.profile.name };

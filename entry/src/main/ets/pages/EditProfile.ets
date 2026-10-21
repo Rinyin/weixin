@@ -1,7 +1,7 @@
 import { PageHeader } from '../components/PageHeader';
 import { AppStore } from '../services/AppStore';
 import { ProfileService } from '../services/ProfileService';
-import { avatarResource, BACKGROUND, GREEN, TEXT_SECONDARY } from '../common/Theme';
+import { avatarResource, BACKGROUND, DIVIDER_COLOR, GREEN, TEXT_PRIMARY, TEXT_SECONDARY } from '../common/Theme';
 
 @Entry
 @Component
@@ -13,6 +13,7 @@ struct EditProfile {
   @State signature: string = AppStore.data.profile.signature;
   @State saving: boolean = false;
   @State error: string = '';
+  @State pickerVisible: boolean = false;
   private avatars: string[] = ['avatar1', 'avatar2', 'avatar3', 'avatar4', 'avatar5', 'avatar6', 'avatar7'];
   private active: boolean = true;
 
@@ -32,33 +33,64 @@ struct EditProfile {
     } finally { if (this.active) { this.saving = false; } }
   }
 
+  @Builder
+  editRow(label: string, value: string, placeholder: string, maxLength: number, onInput: (value: string) => void) {
+    Row({ space: 12 }) {
+      Text(label).fontSize(17 * this.fontScale).fontColor(TEXT_PRIMARY)
+      TextInput({ text: value, placeholder: placeholder }).layoutWeight(1).height(56)
+        .fontSize(16 * this.fontScale).fontColor(TEXT_SECONDARY).textAlign(TextAlign.End)
+        .placeholderFont({ size: 16 * this.fontScale }).placeholderColor('#B2B2B2')
+        .backgroundColor(Color.Transparent).padding(0).borderRadius(0).caretColor(GREEN).maxLength(maxLength)
+        .onChange((text: string) => { onInput(text); this.error = ''; })
+      Text('›').fontSize(22).fontColor('#B2B2B2')
+    }.width('100%').padding({ left: 16, right: 16 }).constraintSize({ minHeight: 56 })
+  }
+
+  @Builder
+  rowDivider() {
+    Divider().strokeWidth(0.5).color(DIVIDER_COLOR).margin({ left: 16 })
+  }
+
   build() {
     Column() {
-      PageHeader({ title: '个人资料' })
+      PageHeader({ title: '个人资料', action: this.saving ? '保存中' : '保存', primary: true,
+        actionEnabled: !this.saving && this.name.trim().length > 0, onAction: () => { this.save(); } })
       Scroll() {
-        Column({ space: 16 }) {
-          Text('选择头像').fontSize(16 * this.fontScale)
-          Flex({ wrap: FlexWrap.Wrap }) {
-            ForEach(this.avatars, (avatar: string) => {
-              Image(avatarResource(avatar)).id('profile-avatar-' + avatar).width(58).height(58).margin(6)
-                .borderRadius(10).border({ width: this.avatar === avatar ? 3 : 0, color: GREEN })
-                .accessibilityText('选择头像 ' + avatar).onClick(() => { this.avatar = avatar; })
-            }, (avatar: string) => avatar)
-          }.width('100%')
-          Text('昵称').fontSize(15 * this.fontScale).fontColor(TEXT_SECONDARY)
-          TextInput({ text: this.name, placeholder: '填写昵称' }).id('profile-name').maxLength(20)
-            .height(48 * this.fontScale).fontSize(17 * this.fontScale).onChange((value: string) => { this.name = value; })
-          Text('微信号：' + AppStore.data.profile.account).fontSize(14 * this.fontScale).fontColor(TEXT_SECONDARY)
-          Text('地区').fontSize(15 * this.fontScale).fontColor(TEXT_SECONDARY)
-          TextInput({ text: this.region, placeholder: '填写地区' }).id('profile-region').maxLength(30)
-            .height(48 * this.fontScale).fontSize(17 * this.fontScale).onChange((value: string) => { this.region = value; })
-          Text('个性签名').fontSize(15 * this.fontScale).fontColor(TEXT_SECONDARY)
-          TextArea({ text: this.signature, placeholder: '写下你的个性签名' }).id('profile-signature').maxLength(80)
-            .height(100 * this.fontScale).fontSize(17 * this.fontScale).onChange((value: string) => { this.signature = value; })
-          if (this.error) { Text(this.error).fontSize(14 * this.fontScale).fontColor('#C33B32') }
-          Button(this.saving ? '正在保存…' : '保存资料').id('profile-save').width('100%').height(48 * this.fontScale)
-            .fontSize(17 * this.fontScale).backgroundColor(GREEN).enabled(!this.saving).onClick(() => { this.save(); })
-        }.padding(20).width('100%').alignItems(HorizontalAlign.Start)
+        Column() {
+          Column() {
+            Row() {
+              Text('头像').fontSize(17 * this.fontScale).fontColor(TEXT_PRIMARY).layoutWeight(1)
+              Image(avatarResource(this.avatar)).width(56).height(56).borderRadius(6)
+              Text('›').fontSize(22).fontColor('#B2B2B2').margin({ left: 12 })
+            }.width('100%').padding({ left: 16, right: 16, top: 14, bottom: 14 })
+            .accessibilityText('更换头像').onClick(() => { this.pickerVisible = !this.pickerVisible; })
+            if (this.pickerVisible) {
+              Flex({ wrap: FlexWrap.Wrap }) {
+                ForEach(this.avatars, (avatar: string) => {
+                  Image(avatarResource(avatar)).width(52).height(52).margin(6).borderRadius(6)
+                    .border({ width: this.avatar === avatar ? 2 : 0, color: GREEN })
+                    .accessibilityText('选择头像 ' + avatar)
+                    .onClick(() => { this.avatar = avatar; this.pickerVisible = false; })
+                }, (avatar: string) => avatar)
+              }.width('100%').padding({ left: 10, right: 10, bottom: 10 })
+            }
+            this.rowDivider()
+            this.editRow('名字', this.name, '填写名字', 20, (value: string) => { this.name = value; })
+            this.rowDivider()
+            Row() {
+              Text('微信号').fontSize(17 * this.fontScale).fontColor(TEXT_PRIMARY).layoutWeight(1)
+              Text(AppStore.data.profile.account).fontSize(16 * this.fontScale).fontColor(TEXT_SECONDARY)
+            }.width('100%').padding({ left: 16, right: 16 }).height(56)
+          }.backgroundColor(Color.White).width('100%')
+          Column() {
+            this.editRow('地区', this.region, '未设置', 30, (value: string) => { this.region = value; })
+            this.rowDivider()
+            this.editRow('个性签名', this.signature, '未填写', 80, (value: string) => { this.signature = value; })
+          }.backgroundColor(Color.White).width('100%').margin({ top: 8 })
+          if (this.error) {
+            Text(this.error).fontSize(14 * this.fontScale).fontColor('#FA5151').width('100%').padding(16)
+          }
+        }.width('100%')
       }.align(Alignment.TopStart).layoutWeight(1).width('100%')
     }.height('100%').width('100%').backgroundColor(BACKGROUND)
   }

@@ -1,6 +1,5 @@
-import { PageHeader } from '../components/PageHeader';
 import { ListDataSource } from '../common/ListDataSource';
-import { avatarResource, BACKGROUND, GREEN, LINK_COLOR, momentImage, TEXT_SECONDARY, timeLabel } from '../common/Theme';
+import { avatarResource, BACKGROUND, GREEN, LINK_COLOR, momentImage, TEXT_PRIMARY, timeLabel } from '../common/Theme';
 import { MomentComment, MomentsRoute, UserProfile } from '../model/Models';
 import { AppStore } from '../services/AppStore';
 import { MomentsService, MomentView } from '../services/MomentsService';
@@ -17,6 +16,9 @@ struct Moments {
   @State error: string = '';
   @State commentFor: string = '';
   @State commentDraft: string = '';
+  @State menuFor: string = '';
+  @State solidHeader: boolean = false;
+  private scroller: Scroller = new Scroller();
   private source: ListDataSource<MomentView> = new ListDataSource<MomentView>();
 
   aboutToAppear(): void {
@@ -55,88 +57,127 @@ struct Moments {
     finally { this.busy = false; }
   }
 
+  private authorName(author: string): string {
+    return author === 'self' ? AppStore.data.profile.name : author;
+  }
+
   @Builder
   card(view: MomentView) {
-    Row({ space: 12 }) {
-      Image(avatarResource(view.avatar)).width(42).height(42).borderRadius(7)
-      Column({ space: 10 }) {
-        Text(view.name).fontSize(17 * this.fontScale).fontColor(LINK_COLOR).fontWeight(FontWeight.Medium)
-        Text(view.moment.text).fontSize(16 * this.fontScale).width('100%')
+    Row({ space: 10 }) {
+      Image(avatarResource(view.avatar)).width(42).height(42).borderRadius(4)
+      Column({ space: 8 }) {
+        Text(view.name).fontSize(16 * this.fontScale).fontColor(LINK_COLOR).fontWeight(FontWeight.Medium)
+        Text(view.moment.text).fontSize(16 * this.fontScale).fontColor(TEXT_PRIMARY).width('100%')
+          .lineHeight(23 * this.fontScale).copyOption(CopyOptions.LocalDevice)
         if (view.moment.image) {
-          Image(momentImage(view.moment.image)).width('80%').height(205).objectFit(ImageFit.Cover).borderRadius(4)
+          Image(momentImage(view.moment.image)).width('62%').aspectRatio(1).objectFit(ImageFit.Cover)
             .accessibilityText('朋友圈配图')
         }
-        Row({ space: 8 }) {
-          Text(timeLabel(view.moment.createdAt)).fontSize(12 * this.fontScale).fontColor(TEXT_SECONDARY).layoutWeight(1)
-          Button(view.moment.liked ? '已赞 ♥' : '赞 ♡', { type: ButtonType.Normal }).id('like-' + view.moment.id)
-            .fontSize(13 * this.fontScale).fontColor(LINK_COLOR).backgroundColor('#F3F3F3').padding(8)
-            .enabled(!this.busy).onClick(() => { this.like(view.moment.id); })
-          Button('评论', { type: ButtonType.Normal }).id('comment-' + view.moment.id)
-            .fontSize(13 * this.fontScale).fontColor(LINK_COLOR).backgroundColor('#F3F3F3').padding(8)
-            .enabled(!this.busy).onClick(() => { this.commentFor = view.moment.id; this.commentDraft = ''; })
+        Row() {
+          Text(timeLabel(view.moment.createdAt)).fontSize(12 * this.fontScale).fontColor('#B2B2B2').layoutWeight(1)
+          if (this.menuFor === view.moment.id) {
+            Row() {
+              Text(view.moment.liked ? '♥ 取消' : '♡ 赞').fontSize(14 * this.fontScale).fontColor(Color.White)
+                .padding({ left: 16, right: 16, top: 8, bottom: 8 })
+                .onClick(() => { this.menuFor = ''; this.like(view.moment.id); })
+              Divider().vertical(true).height(18).color('#3E3E3E')
+              Text('💬 评论').fontSize(14 * this.fontScale).fontColor(Color.White)
+                .padding({ left: 16, right: 16, top: 8, bottom: 8 })
+                .onClick(() => { this.menuFor = ''; this.commentFor = view.moment.id; this.commentDraft = ''; })
+            }.backgroundColor('#4C4C4C').borderRadius(4).margin({ right: 8 }).enabled(!this.busy)
+          }
+          Text('··').fontSize(18).fontWeight(FontWeight.Bold).fontColor(LINK_COLOR)
+            .width(32).height(22).textAlign(TextAlign.Center).borderRadius(3).backgroundColor('#F7F7F7')
+            .accessibilityText('赞或评论')
+            .onClick(() => { this.menuFor = this.menuFor === view.moment.id ? '' : view.moment.id; })
         }.width('100%')
         if (view.moment.liked || view.moment.comments.length > 0) {
-          Column({ space: 6 }) {
+          Column({ space: 4 }) {
             if (view.moment.liked) {
-              Text('♥ ' + AppStore.data.profile.name).fontSize(14 * this.fontScale).fontColor(LINK_COLOR)
+              Text('♡ ' + AppStore.data.profile.name).fontSize(14 * this.fontScale).fontColor(LINK_COLOR)
+                .width('100%').padding({ bottom: view.moment.comments.length > 0 ? 6 : 0 })
+            }
+            if (view.moment.liked && view.moment.comments.length > 0) {
+              Divider().strokeWidth(0.5).color('#E5E5E5')
             }
             ForEach(view.moment.comments, (comment: MomentComment) => {
-              Text((comment.author === 'self' ? AppStore.data.profile.name : comment.author) + '：' + comment.text)
-                .fontSize(14 * this.fontScale).fontColor(LINK_COLOR).width('100%')
+              Text() {
+                Span(this.authorName(comment.author)).fontColor(LINK_COLOR).fontWeight(FontWeight.Medium)
+                Span('：' + comment.text).fontColor(TEXT_PRIMARY)
+              }.fontSize(14 * this.fontScale).width('100%')
             }, (comment: MomentComment) => comment.id)
-          }.padding(10).width('100%').backgroundColor('#F5F5F5').alignItems(HorizontalAlign.Start)
+          }.padding({ left: 10, right: 10, top: 6, bottom: 6 }).width('100%').backgroundColor('#F7F7F7')
+          .borderRadius(2).alignItems(HorizontalAlign.Start)
         }
       }.layoutWeight(1).alignItems(HorizontalAlign.Start)
-    }.alignItems(VerticalAlign.Top).padding(18).width('100%').backgroundColor(Color.White)
+    }.alignItems(VerticalAlign.Top).padding({ left: 12, right: 16, top: 16, bottom: 16 }).width('100%')
+    .backgroundColor(Color.White)
+  }
+
+  @Builder
+  cover() {
+    Stack({ alignContent: Alignment.BottomEnd }) {
+      Column() {
+        Image(momentImage('img1')).width('100%').height(300).objectFit(ImageFit.Cover)
+      }.width('100%').height(330).alignItems(HorizontalAlign.Start)
+      Row({ space: 14 }) {
+        Text(this.profile.name).fontSize(19 * this.fontScale).fontWeight(FontWeight.Medium).fontColor(Color.White)
+          .textShadow({ radius: 4, color: '#80000000', offsetX: 0, offsetY: 1 }).margin({ bottom: 40 })
+        Image(avatarResource(this.profile.avatar)).width(72).height(72).borderRadius(8)
+          .border({ width: 2, color: Color.White })
+      }.padding({ right: 16 })
+    }.width('100%').backgroundColor(Color.White)
   }
 
   build() {
-    Column() {
-      PageHeader({ title: this.mineOnly ? '我的朋友圈' : '朋友圈', action: '发表', onAction: () => {
-        this.getUIContext().getRouter().pushUrl({ url: 'pages/PublishMoment' });
-      } })
-      List({ space: 1 }) {
-        ListItem() {
-          Column({ space: 12 }) {
-            Image(momentImage('img1')).width('100%').height(155).objectFit(ImageFit.Cover)
-            Row({ space: 12 }) {
-              Text(this.profile.name).fontSize(21 * this.fontScale).fontWeight(FontWeight.Bold).layoutWeight(1)
-              Image(avatarResource(this.profile.avatar)).width(52).height(52).borderRadius(8)
-            }.width('100%').padding({ left: 20, right: 20 })
-            Text(this.mineOnly ? '只展示我发表的内容' : '朋友们的生活片刻')
-              .fontSize(13 * this.fontScale).fontColor(TEXT_SECONDARY).padding({ bottom: 16 })
-          }.width('100%').backgroundColor(Color.White)
-        }
-        if (this.count === 0) {
-          ListItem() {
-            Text('还没有动态，点击右上角发表第一条吧。').fontSize(16 * this.fontScale).fontColor(TEXT_SECONDARY).padding(28)
+    Stack({ alignContent: Alignment.Top }) {
+      Column() {
+        List({ scroller: this.scroller }) {
+          ListItem() { this.cover() }
+          if (this.count === 0) {
+            ListItem() {
+              Text(this.mineOnly ? '还没有发表过朋友圈' : '暂时没有朋友圈动态').fontSize(15 * this.fontScale)
+                .fontColor('#B2B2B2').padding(40).width('100%').textAlign(TextAlign.Center)
+            }
           }
+          LazyForEach(this.source, (view: MomentView) => {
+            ListItem() { this.card(view) }
+          }, (view: MomentView) => view.key)
+        }.layoutWeight(1).width('100%').scrollBar(BarState.Off).edgeEffect(EdgeEffect.Spring)
+        .divider({ strokeWidth: 0.5, color: '#EDEDED' })
+        .onDidScroll(() => { this.solidHeader = this.scroller.currentOffset().yOffset > 220; })
+        .onClick(() => { this.menuFor = ''; })
+        if (this.error) {
+          Text(this.error).fontSize(14 * this.fontScale).fontColor('#FA5151').padding(10).width('100%')
+            .backgroundColor(Color.White)
         }
-        LazyForEach(this.source, (view: MomentView) => {
-          ListItem() { this.card(view) }
-        }, (view: MomentView) => view.key)
-        ListItem() {
-          Text('本地课程数据 · 仅保存在此设备').fontSize(12 * this.fontScale).fontColor(TEXT_SECONDARY)
-            .width('100%').textAlign(TextAlign.Center).padding(24)
-        }
-      }.layoutWeight(1).width('100%').scrollBar(BarState.Off)
-      if (this.error) { Text(this.error).fontSize(14 * this.fontScale).fontColor('#C33B32').padding(10) }
-      if (this.commentFor) {
-        Column({ space: 8 }) {
-          Row() {
-            Text('写评论').fontSize(14 * this.fontScale).layoutWeight(1)
-            Button('取消', { type: ButtonType.Normal }).fontSize(13 * this.fontScale).fontColor(TEXT_SECONDARY)
-              .backgroundColor(Color.Transparent).onClick(() => { this.commentFor = ''; this.commentDraft = ''; })
-          }.width('100%')
+        if (this.commentFor) {
           Row({ space: 8 }) {
-            TextInput({ text: this.commentDraft, placeholder: '评论内容（最多 200 字）' }).id('moment-comment')
-              .fontSize(16 * this.fontScale).height(46 * this.fontScale).layoutWeight(1).maxLength(200)
+            TextInput({ text: this.commentDraft, placeholder: '评论' }).fontSize(16 * this.fontScale)
+              .constraintSize({ minHeight: 38 }).layoutWeight(1).maxLength(200).borderRadius(4)
+              .backgroundColor(Color.White).caretColor(GREEN).defaultFocus(true)
+              .enterKeyType(EnterKeyType.Send).onSubmit(() => { this.sendComment(); })
               .onChange((value: string) => { this.commentDraft = value; })
-            Button('发送').id('moment-comment-send').fontSize(15 * this.fontScale).backgroundColor(GREEN)
+            Button('发送', { type: ButtonType.Normal }).fontSize(15 * this.fontScale).height(34)
+              .padding({ left: 12, right: 12 }).borderRadius(4)
+              .backgroundColor(this.commentDraft.trim().length > 0 ? GREEN : '#E1E1E1')
+              .fontColor(this.commentDraft.trim().length > 0 ? Color.White : '#B2B2B2')
               .enabled(!this.busy && this.commentDraft.trim().length > 0).onClick(() => { this.sendComment(); })
-          }.width('100%')
-        }.padding(12).width('100%').backgroundColor(Color.White)
-      }
-    }.height('100%').width('100%').backgroundColor(BACKGROUND)
+            Text('取消').fontSize(15 * this.fontScale).fontColor(TEXT_PRIMARY).padding(4)
+              .onClick(() => { this.commentFor = ''; this.commentDraft = ''; })
+          }.padding({ left: 10, right: 10, top: 8, bottom: 8 }).width('100%').backgroundColor('#F7F7F7')
+          .border({ width: { top: 0.5 }, color: '#DDDDDD' })
+        }
+      }.width('100%').height('100%')
+      Row() {
+        Text('‹').fontSize(36).width(48).height(48).textAlign(TextAlign.Center)
+          .fontColor(this.solidHeader ? TEXT_PRIMARY : Color.White).accessibilityText('返回')
+          .onClick(() => { this.getUIContext().getRouter().back(); })
+        Text(this.solidHeader ? (this.mineOnly ? '我的朋友圈' : '朋友圈') : '').fontSize(17 * this.fontScale)
+          .fontWeight(FontWeight.Medium).fontColor(TEXT_PRIMARY).layoutWeight(1).textAlign(TextAlign.Center)
+        Text('📷').fontSize(22).width(48).height(48).textAlign(TextAlign.Center).accessibilityText('发表朋友圈')
+          .onClick(() => { this.getUIContext().getRouter().pushUrl({ url: 'pages/PublishMoment' }); })
+      }.width('100%').height(56).backgroundColor(this.solidHeader ? BACKGROUND : Color.Transparent)
+    }.height('100%').width('100%').backgroundColor(Color.White)
   }
 }

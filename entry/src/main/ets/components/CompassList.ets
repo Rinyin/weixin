@@ -9,20 +9,16 @@ export struct CompassList {
   build() {
     Column() {
       PageHeader({ title: '发现', back: false })
-      List({ space: 12 }) {
+      List({ space: 8 }) {
         ListItem() {
-          MenuRow({ title: '朋友圈', rowId: 'discover-moments', onOpen: () => {
+          MenuRow({ title: '朋友圈', onOpen: () => {
             this.getUIContext().getRouter().pushUrl({ url: 'pages/Moments', params: { mineOnly: false } });
           } })
         }
         ListItem() {
-          MenuRow({ title: '视频号', rowId: 'discover-video', icon: $r('app.media.shipinhao'), color: '#F4A13C', onOpen: () => {
+          MenuRow({ title: '视频号', icon: $r('app.media.shipinhao'), color: '#F4A13C', onOpen: () => {
             this.getUIContext().getRouter().pushUrl({ url: 'pages/VideoChannel' });
           } })
-        }
-        ListItem() {
-          Text('本地课程数据 · 分享生活中的小美好').fontSize(13 * this.fontScale)
-            .fontColor(TEXT_SECONDARY).padding(20).width('100%').textAlign(TextAlign.Center)
         }
       }.layoutWeight(1).width('100%')
     }.height('100%').width('100%').backgroundColor(BACKGROUND)
