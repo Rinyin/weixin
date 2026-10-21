@@ -1,13 +1,17 @@
 export interface VideoClip {
   id: string;
   title: string;
+  author: string;
+  avatar: Resource;
+  // 本地示例数据：赞过该视频的好友昵称，用于“朋友”页。
+  friendLikes: string[];
   source: Resource;
 }
 
 export const VIDEO_CLIPS: VideoClip[] = [
-  { id: 'shaoen', title: '课程视频 01', source: $rawfile('shaoen.mp4') },
-  { id: 'shaoen2', title: '课程视频 02', source: $rawfile('shaoen2.mp4') },
-  { id: 'yuan', title: '课程视频 03', source: $rawfile('yuan.mp4') }
+  { id: 'shaoen', title: '小羊肖恩：农场里的新鲜事', author: '动画放映厅', avatar: $r('app.media.doglaugh'), friendLikes: [], source: $rawfile('shaoen.mp4') },
+  { id: 'shaoen2', title: '小羊肖恩：又是热闹的一天', author: '动画放映厅', avatar: $r('app.media.doglaugh'), friendLikes: ['敖丙', '哪吒'], source: $rawfile('shaoen2.mp4') },
+  { id: 'yuan', title: '火烈鸟的悠闲时光', author: '萌宠动画', avatar: $r('app.media.dog'), friendLikes: ['太乙真人'], source: $rawfile('yuan.mp4') }
 ];
 
 export function videoTime(seconds: number): string {
